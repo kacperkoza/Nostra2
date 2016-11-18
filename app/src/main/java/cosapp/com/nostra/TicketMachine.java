@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.LatLng;
  */
 //git master change
 //GITHUB TEST
+    // BRANCH TEST
 public class TicketMachine {
     private LatLng latLng;
     private String placeName;
