@@ -5,7 +5,7 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Created by kkoza on 11.11.2016.
  */
-
+//GITHUB TEST
 public class TicketMachine {
     private LatLng latLng;
     private String placeName;
