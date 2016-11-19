@@ -2,6 +2,7 @@ package cosapp.com.nostra;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -60,6 +61,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             dataManager.addTicketMachine(tm);
         }
 
+
+        Distance distance = new Distance(dataManager.getCoords(), new LatLng(52.405794, 16.930569));
+        Log.d("website", distance.websiteRequestBuilder());
+
     }
 
     /**
@@ -75,14 +80,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        ArrayList<TicketMachine> machines = dataManager.getAllMachines();
+        ArrayList<TicketMachine> machines = dataManager.getCoordsAndPlaceNames();
 
-        for (int i = 0 ; i < machines.size() ; i++) {
+        /*for (int i = 0 ; i < machines.size() ; i++) {
             LatLng latLng = machines.get(i).getLatLng();
             String name = machines.get(i).getPlaceName();
             mMap.addMarker(new MarkerOptions().position(latLng).title(name));
-        }
-
+        }*/
+        mMap.addMarker(new MarkerOptions().position(new LatLng(52.405794, 16.930569)).title("Aktualna pozycja"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(machines.get(0).getLatLng(),12.0f));
     }
 }
