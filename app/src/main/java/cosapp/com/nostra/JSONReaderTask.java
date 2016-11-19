@@ -3,12 +3,6 @@ package cosapp.com.nostra;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,18 +15,14 @@ import java.net.URLConnection;
 
 
 
-public class JSONReaderTask extends AsyncTask<Void, Void, Void> {
-
+public class JSONReaderTask extends AsyncTask<Void, Void, String> {
     private String websiteURL;
-    private DataManager dataManager;
 
-    public JSONReaderTask(String websiteURL, DataManager dataManager) {
-        this.websiteURL = websiteURL;
-        this.dataManager = dataManager;
+    public JSONReaderTask(String websiteURL) {
+    this.websiteURL = websiteURL;
     }
 
-
-    protected Void doInBackground(Void... voids) {
+    protected String doInBackground(Void... voids) {
         URLConnection urlConn = null;
         BufferedReader bufferedReader = null;
 
@@ -43,11 +33,13 @@ public class JSONReaderTask extends AsyncTask<Void, Void, Void> {
 
             StringBuffer stringBuffer = new StringBuffer();
             String line;
+
             while ((line = bufferedReader.readLine()) != null) {
                 stringBuffer.append(line);
             }
-            addTicketMachinesToTheDataBase(new JSONObject(stringBuffer.toString()));
-            return null;
+
+            return stringBuffer.toString();
+
         } catch (Exception ex) {
             Log.e("App", "yourDataTask", ex);
             return null;
@@ -60,39 +52,6 @@ public class JSONReaderTask extends AsyncTask<Void, Void, Void> {
                     return null;
                 }
             }
-        }
-
-    }
-
-    public void addTicketMachinesToTheDataBase(JSONObject input) throws JSONException {
-
-        JSONArray features = input.getJSONArray("features");
-
-        for (int i = 0; i < features.length(); i++) {
-
-            TicketMachine ticketMachine = new TicketMachine();
-
-            JSONObject object = features.getJSONObject(i);
-            ticketMachine.setID(object.getInt("id"));
-
-            JSONObject geometry = object.getJSONObject("geometry");
-            JSONArray coordinates = geometry.getJSONArray("coordinates");
-            ticketMachine.setLatLng(new LatLng(
-                    (Double) coordinates.get(0),
-                    (Double) coordinates.get(1)));
-
-            JSONObject properties = object.getJSONObject("properties");
-            ticketMachine.setPlaceName(properties.getString("nazwa"));
-
-            String description = properties.getString("opis");
-            ticketMachine.setDescription(Utils.deleteHTMLTags(description));
-
-            if (properties.has("y_4346_karty_p_atnic"))
-                ticketMachine.setPaymentByCreditCardAvailable(true);
-            else
-                ticketMachine.setPaymentByCreditCardAvailable(false);
-            Log.d("TAG", ticketMachine.toString());
-            dataManager.addTicketMachine(ticketMachine);
         }
     }
 }

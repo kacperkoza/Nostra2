@@ -10,15 +10,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private DataManager dataManager;
-    private JSONReaderTask jsonReaderTask;
-    public final static String ticketMachinesURL =
-            "http://www.poznan.pl/mim/plan/map_service.html?mtype=pub_transport&co=class_objects&class_id=4000";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +30,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        dataManager = new DataManager(this);
-        jsonReaderTask = new JSONReaderTask(ticketMachinesURL, dataManager);
-        jsonReaderTask.execute();
-    }
 
+        JSONReaderTask jsonReaderTask = new JSONReaderTask(Websites.TICKET_MACHINES.toString());
+        jsonReaderTask.execute();
+
+        String JSONText = null;
+
+        try {
+            JSONText = jsonReaderTask.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        ArrayList<TicketMachine> machines = new ArrayList<>(100);
+
+        if (JSONText != null) {
+            try {
+                machines = JSONParser.getTicketMachines(JSONText);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        dataManager = new DataManager(this);
+
+        for (TicketMachine tm : machines) {
+            dataManager.addTicketMachine(tm);
+        }
+
+    }
 
     /**
      * Manipulates the map once available.
@@ -55,6 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             String name = machines.get(i).getPlaceName();
             mMap.addMarker(new MarkerOptions().position(latLng).title(name));
         }
+
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(machines.get(0).getLatLng(),12.0f));
     }
 }
