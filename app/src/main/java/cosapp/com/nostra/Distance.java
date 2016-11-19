@@ -1,5 +1,7 @@
 package cosapp.com.nostra;
 
+import android.util.Log;
+
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -17,10 +19,9 @@ public class Distance {
     private ArrayList<LatLng> destinations;
     private LocationListener mLocationManager;
 
-
-    public Distance(int distanceBetweenTwoLatLng, LatLng firstPoint, LatLng secondPoint) {
-        this.distanceBetweenTwoLatLng = distanceBetweenTwoLatLng;
-        currentPosition = null;
+    public Distance(ArrayList<LatLng> destinations, LatLng currentPosition) {
+        this.currentPosition = currentPosition;
+        this.destinations = destinations;
     }
 
     public double getDistanceBetweenTwoPoints() {
@@ -28,25 +29,26 @@ public class Distance {
         return distanceBetweenTwoLatLng;
     }
 
-    private String websiteRequestBuilder() {
+    public String websiteRequestBuilder() {
         StringBuilder stringBuilder = new StringBuilder()
-                .append("https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=")
+                .append("https://maps.googleapis.com/maps/api/distancematrix/json?units=metrics&" +
+                        "mode=walking&origins=")
                 .append(currentPosition.latitude)
                 .append(",")
                 .append(currentPosition.longitude)
-                .append("&destination=");
+                .append("&destinations=");
 
         for (LatLng latLng : destinations) {
             stringBuilder.append(latLng.latitude)
-                    .append("%C")
+                    .append("%2C")
                     .append(latLng.longitude)
-                    .append("|");
+                    .append('|');
+            Log.d("lol", "|");
         }
 
         stringBuilder.append("key=")
                 .append(APIKey);
 
         return stringBuilder.toString();
-
     }
 }
