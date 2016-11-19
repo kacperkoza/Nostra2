@@ -47,15 +47,9 @@ public class DataManager extends SQLiteOpenHelper {
         db.insertOrThrow("parkingMachines", null, contentValues);
     }
 
-    public Cursor getTicketMachinesCoords() {
-        String[] columns = {"x", "y", "placeName"};
-        SQLiteDatabase db = getReadableDatabase();
-        return db.query("parkingMachines", columns, null, null, null, null, null);
-    }
-
-    public ArrayList<TicketMachine> getAllMachines(){
+    public ArrayList<TicketMachine> getCoordsAndPlaceNames(){
         ArrayList<TicketMachine> list = new ArrayList<>(60);
-        Cursor cursor = getTicketMachinesCoords();
+        Cursor cursor = makeQuery("x", "y", "placeName");
 
         while (cursor.moveToNext()) {
             TicketMachine ticketMachine = new TicketMachine();
@@ -65,4 +59,23 @@ public class DataManager extends SQLiteOpenHelper {
         }
         return list;
     }
+
+    public ArrayList<LatLng> getCoords(){
+        ArrayList<LatLng> list = new ArrayList<>(60);
+        Cursor cursor = makeQuery("x", "y");
+
+        while (cursor.moveToNext()) {
+            LatLng latLng = new LatLng(cursor.getDouble(0), cursor.getDouble(1));
+            list.add(latLng);
+        }
+        return list;
+
+    }
+
+    private Cursor makeQuery(String... columns) {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.query("parkingMachines", columns, null, null, null, null, null);
+    }
+
+
 }
