@@ -17,8 +17,13 @@ import java.util.ArrayList;
 public class JSONParser {
 
     /**
-     * Parser for JSON text which contains information about xy coords, place address, place name,
-     * description and availbility of payment by credit cards.
+     * Parser for JSON text which contains information about:
+     * <ul>
+     *     <li>xy coords,</li>
+     *     <li>place name</li>
+     *     <li>place description</li>
+     *     <li>availbility of payment by credit cards</li>
+     * </ul>
      *
      * @param website Text with JSON objects of ticket machines
      * @return ArrayList of the Ticket machines
@@ -30,7 +35,7 @@ public class JSONParser {
         ArrayList<TicketMachine> machines = new ArrayList<>(70);
         JSONArray features = input.getJSONArray("features");
 
-        for (int i = 0; i < features.length(); i++) {
+        for (int i = 0 ; i < features.length() ; i++) {
 
             TicketMachine ticketMachine = new TicketMachine();
 
@@ -60,4 +65,6 @@ public class JSONParser {
 
         return machines;
     }
+
+
 }
