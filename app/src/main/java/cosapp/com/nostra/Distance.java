@@ -1,8 +1,5 @@
 package cosapp.com.nostra;
 
-import android.util.Log;
-
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -12,12 +9,8 @@ import java.util.ArrayList;
  */
 
 public class Distance {
-    public static final String website = "";
-    private static final String APIKey = "AIzaSyAn8WHMVkL6gPV45c8M9MRvVwDzXmLtFYI";
-    private int distanceBetweenTwoLatLng;
     private LatLng currentPosition;
     private ArrayList<LatLng> destinations;
-    private LocationListener mLocationManager;
 
     public Distance(ArrayList<LatLng> destinations, LatLng currentPosition) {
         this.currentPosition = currentPosition;
@@ -25,14 +18,24 @@ public class Distance {
     }
 
     public double getDistanceBetweenTwoPoints() {
-
-        return distanceBetweenTwoLatLng;
+        return 0;
     }
 
+    /**
+     *  Builds a website for request Google Maps API:
+     *  <ul>
+     *      <li>Output format : JSON</li>
+     *      <li>Mode : Walking</li>
+     *      <li>Units : metrics</li>
+     *      <li>Origin : currentPosition</li>
+     *      <li>Destinations : List of LatLng objects</li>
+     *      <li>Key : Google Maps API Key for this app </li>
+     *  </ul>
+     * @return String with prepared URL for reqest Google Maps API
+     */
     public String websiteRequestBuilder() {
         StringBuilder stringBuilder = new StringBuilder()
-                .append("https://maps.googleapis.com/maps/api/distancematrix/json?units=metrics&" +
-                        "mode=walking&origins=")
+                .append(Websites.GOOGLE_MAPS_REQUEST_LINK)
                 .append(currentPosition.latitude)
                 .append(",")
                 .append(currentPosition.longitude)
@@ -43,11 +46,10 @@ public class Distance {
                     .append("%2C")
                     .append(latLng.longitude)
                     .append('|');
-            Log.d("lol", "|");
         }
 
         stringBuilder.append("key=")
-                .append(APIKey);
+                .append(Websites.GOOGLE_MAPS_API_KEY);
 
         return stringBuilder.toString();
     }
