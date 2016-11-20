@@ -60,10 +60,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (TicketMachine tm : machines) {
             dataManager.addTicketMachine(tm);
         }
-
-
-        Distance distance = new Distance(dataManager.getCoords(), new LatLng(52.405794, 16.930569));
-        Log.d("website", distance.websiteRequestBuilder());
+        
+        Log.d("website",
+                GoogleMapsRequestBuilder.websiteRequestBuilder
+                        (new LatLng(52.405794, 16.930569), dataManager.getCoords()));
 
     }
 
