@@ -16,7 +16,7 @@ public class GoogleMapsRequestBuilder {
     private static final String UNITS = "units=";
     private static final String MODE = "mode=";
     private static final String ORIGINS = "origins=";
-    private static final String DESTINATIONS = "destinations";
+    private static final String DESTINATIONS = "destinations=";
     private static final String how_call_it = "%2C";
     private static final String bar = "|";
     private static final String API_KEY = "AIzaSyAn8WHMVkL6gPV45c8M9MRvVwDzXmLtFYI";
@@ -46,6 +46,7 @@ public class GoogleMapsRequestBuilder {
                 .append(currentPosition.latitude)
                 .append(",")
                 .append(currentPosition.longitude)
+                .append(AMPERSAND)
                 .append(DESTINATIONS);
 
         for (LatLng latLng : destinations) {
@@ -54,7 +55,8 @@ public class GoogleMapsRequestBuilder {
                     .append(latLng.longitude)
                     .append(bar);
         }
-
+        stringBuilder.deleteCharAt(stringBuilder.length()-1);
+        stringBuilder.append(AMPERSAND);
         stringBuilder.append("key=")
                 .append(API_KEY);
 
