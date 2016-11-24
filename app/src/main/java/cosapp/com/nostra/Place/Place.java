@@ -19,6 +19,14 @@ public abstract class Place {
         this.placeName = "";
     }
 
+    @Override
+    public String toString() {
+        return "Place{" +
+                "coordinates=" + coordinates +
+                ", placeName='" + placeName + '\'' +
+                '}';
+    }
+
     public LatLng getCoordinates() {
         return coordinates;
     }
@@ -35,10 +43,4 @@ public abstract class Place {
         this.placeName = placeName;
     }
 
-    @Override
-    public String toString() {
-        return getClass().getName() + "[" +
-                 coordinates + ", " +
-                "name=" + placeName + "]";
-    }
 }
