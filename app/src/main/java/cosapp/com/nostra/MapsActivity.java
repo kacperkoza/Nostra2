@@ -11,7 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+<<<<<<< HEAD
 import android.widget.ArrayAdapter;
+=======
+import android.widget.BaseAdapter;
+>>>>>>> master
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,8 +33,11 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import cosapp.com.nostra.JSON.JSONParser;
+import cosapp.com.nostra.JSON.JSONReaderTask;
+import cosapp.com.nostra.Place.TicketMachine;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -92,15 +99,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ArrayList<TicketMachine> machines = dataManager.getCoordsAndPlaceNames();
 
         /*for (int i = 0 ; i < machines.size() ; i++) {
-            LatLng latLng = machines.get(i).getLatLng();
+            LatLng latLng = machines.get(i).getCoordinates();
             String name = machines.get(i).getPlaceName();
             mMap.addMarker(new MarkerOptions().position(latLng).title(name));
         }*/
         mMap.addMarker(new MarkerOptions().position(new LatLng(52.405794, 16.930569)).title("Aktualna pozycja"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(machines.get(0).getLatLng(),12.0f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(machines.get(0).getCoordinates(),12.0f));
     }
 
+<<<<<<< HEAD
     private void createDrawer(){
+=======
+    private void initializeDrawerListView() {
+        mDrawerListOptions = getResources().getStringArray(R.array.navigation_drawer_options);
+>>>>>>> master
         mDrawerList = (ListView)findViewById(R.id.left_drawer);
         getDrawerMenuData();
         DrawerListOptionsAdapter adapter = new DrawerListOptionsAdapter(this,

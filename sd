@@ -1,0 +1,68 @@
+[1mdiff --git a/app/src/main/java/cosapp/com/nostra/Distance.java b/app/src/main/java/cosapp/com/nostra/Distance.java[m
+[1mindex 21d4b38..fadbd0a 100644[m
+[1m--- a/app/src/main/java/cosapp/com/nostra/Distance.java[m
+[1m+++ b/app/src/main/java/cosapp/com/nostra/Distance.java[m
+[36m@@ -1,8 +1,5 @@[m
+ package cosapp.com.nostra;[m
+ [m
+[31m-import android.util.Log;[m
+[31m-[m
+[31m-import com.google.android.gms.location.LocationListener;[m
+ import com.google.android.gms.maps.model.LatLng;[m
+ [m
+ import java.util.ArrayList;[m
+[36m@@ -12,12 +9,8 @@[m [mimport java.util.ArrayList;[m
+  */[m
+ [m
+ public class Distance {[m
+[31m-    public static final String website = "";[m
+[31m-    private static final String APIKey = "AIzaSyAn8WHMVkL6gPV45c8M9MRvVwDzXmLtFYI";[m
+[31m-    private int distanceBetweenTwoLatLng;[m
+     private LatLng currentPosition;[m
+     private ArrayList<LatLng> destinations;[m
+[31m-    private LocationListener mLocationManager;[m
+ [m
+     public Distance(ArrayList<LatLng> destinations, LatLng currentPosition) {[m
+         this.currentPosition = currentPosition;[m
+[36m@@ -25,14 +18,24 @@[m [mpublic class Distance {[m
+     }[m
+ [m
+     public double getDistanceBetweenTwoPoints() {[m
+[31m-[m
+[31m-        return distanceBetweenTwoLatLng;[m
+[32m+[m[32m        return 0;[m
+     }[m
+ [m
+[32m+[m[32m    /**[m
+[32m+[m[32m     *  Builds a website for request Google Maps API:[m
+[32m+[m[32m     *  <ul>[m
+[32m+[m[32m     *      <li>Output format : JSON</li>[m
+[32m+[m[32m     *      <li>Mode : Walking</li>[m
+[32m+[m[32m     *      <li>Units : metrics</li>[m
+[32m+[m[32m     *      <li>Origin : currentPosition</li>[m
+[32m+[m[32m     *      <li>Destinations : List of LatLng objects</li>[m
+[32m+[m[32m     *      <li>Key : Google Maps API Key for this app </li>[m
+[32m+[m[32m     *  </ul>[m
+[32m+[m[32m     * @return String with prepared URL for reqest Google Maps API[m
+[32m+[m[32m     */[m
+     public String websiteRequestBuilder() {[m
+         StringBuilder stringBuilder = new StringBuilder()[m
+[31m-                .append("https://maps.googleapis.com/maps/api/distancematrix/json?units=metrics&" +[m
+[31m-                        "mode=walking&origins=")[m
+[32m+[m[32m                .append(Websites.GOOGLE_MAPS_REQUEST_LINK)[m
+                 .append(currentPosition.latitude)[m
+                 .append(",")[m
+                 .append(currentPosition.longitude)[m
+[36m@@ -43,11 +46,10 @@[m [mpublic class Distance {[m
+                     .append("%2C")[m
+                     .append(coordinates.longitude)[m
+                     .append('|');[m
+[31m-            Log.d("lol", "|");[m
+         }[m
+ [m
+         stringBuilder.append("key=")[m
+[31m-                .append(APIKey);[m
+[32m+[m[32m                .append(Websites.GOOGLE_MAPS_API_KEY);[m
+ [m
+         return stringBuilder.toString();[m
+     }[m
