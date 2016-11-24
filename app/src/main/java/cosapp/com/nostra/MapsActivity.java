@@ -1,9 +1,5 @@
 package cosapp.com.nostra;
 
-import android.content.Context;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -11,15 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-<<<<<<< HEAD
-import android.widget.ArrayAdapter;
-=======
 import android.widget.BaseAdapter;
->>>>>>> master
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,8 +21,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONException;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -44,18 +33,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private DataManager dataManager;
     private ListView mDrawerList;
-    private ArrayList<MenuOption> menuOptions;
-
+    private String[] mDrawerListOptions;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        initializeDrawerListView();
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        createDrawer();
+
 
         JSONReaderTask jsonReaderTask = new JSONReaderTask(Websites.TICKET_MACHINES.toString());
         jsonReaderTask.execute();
@@ -92,6 +83,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -107,31 +107,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(machines.get(0).getCoordinates(),12.0f));
     }
 
-<<<<<<< HEAD
-    private void createDrawer(){
-=======
     private void initializeDrawerListView() {
         mDrawerListOptions = getResources().getStringArray(R.array.navigation_drawer_options);
->>>>>>> master
         mDrawerList = (ListView)findViewById(R.id.left_drawer);
-        getDrawerMenuData();
-        DrawerListOptionsAdapter adapter = new DrawerListOptionsAdapter(this,
-                R.layout.drawer_item_list, menuOptions);
-        mDrawerList.setAdapter(adapter);
+        mDrawerList.setAdapter(new CustomAdapter());
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
     }
-
-    private void getDrawerMenuData(){
-        menuOptions = new ArrayList<>();
-        String[] menuNames = getResources().getStringArray(R.array.navigation_drawer_options);
-        String[] menuIcons = getResources().getStringArray(R.array.navigation_drawer_option_icons);
-        for(int i=0;i<menuNames.length;i++){
-            MenuOption option = new MenuOption(menuNames[i],menuIcons[i]);
-            menuOptions.add(option);
-        }
-    }
-
-
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
 
@@ -146,83 +127,66 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             /*
             Sprawdzenie który element został wybrany, aktualizacja mapy
              */
-            Toast.makeText(MapsActivity.this,"Kliknieto pozycje: " + position, Toast.LENGTH_LONG).show();
         }
     }
 
-    public class MenuOption{
-        public String menuName;
-        private String iconName;
 
-        public MenuOption(String menuName,String iconName){
-            this.menuName = menuName;
-            this.iconName = iconName;
-        }
+    private class CustomAdapter extends BaseAdapter implements ListView.OnItemClickListener {
 
-        public Bitmap getIconBitmap() throws IOException{
-            AssetManager manager = getAssets();
-            InputStream is = null;
-            is = manager.open(iconName);
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
-            closeStream(is);
-            return bitmap;
+        private LayoutInflater inflanter;
 
-        }
 
-        private void closeStream(InputStream stream){
-            try{
-                stream.close();
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private class DrawerListOptionsAdapter extends ArrayAdapter<MenuOption>{
-
-        public DrawerListOptionsAdapter(Context context, int resource, List<MenuOption> objects) {
-            super(context, resource, objects);
+        public CustomAdapter(){
+            inflanter = MapsActivity.this.getLayoutInflater();
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public int getCount() {
+            return mDrawerListOptions.length;
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        public class ViewHolder{
+            public TextView textView;
+            public ImageView imageView;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup viewGroup) {
+            View vi = convertView;
             ViewHolder holder;
             if(convertView == null){
-                LayoutInflater inflanter = getLayoutInflater().from(getContext());
-                convertView = inflanter.inflate(R.layout.drawer_item_list,null);
+                vi = inflanter.inflate(R.layout.drawer_item_list,null);
+
                 holder = new ViewHolder();
-                holder.textView = (TextView)convertView.findViewById(R.id.list_view_option);
-                holder.imageView = (ImageView)convertView.findViewById(R.id.list_view_image_option);
-                convertView.setTag(holder);
-            }else{
-                holder = (ViewHolder)convertView.getTag();
+                holder.textView = (TextView)vi.findViewById(R.id.list_view_option);
+                holder.imageView = (ImageView)vi.findViewById(R.id.list_view_image_option);
+
+                vi.setTag(holder);
+            }else {
+                holder = (ViewHolder)vi.getTag();
             }
 
-            MenuOption option = getItem(position);
-
-            if(option != null){
-                createView(option,holder);
-            }
-
-            return convertView;
-        }
-
-        private void createView(MenuOption option, ViewHolder holder){
-            holder.textView.setText(option.menuName);
+            if(mDrawerListOptions.length > 0){
+                holder.textView.setText(mDrawerListOptions[position]);
+                holder.imageView.setImageResource();
 
 
-            try{
-                Bitmap bitmap = option.getIconBitmap();
-                holder.imageView.setImageBitmap(bitmap);
-            }catch (IOException e){
-                holder.imageView.setImageResource(R.mipmap.ic_error_black_24dp);
             }
         }
     }
-
-    static class ViewHolder{
-        TextView textView;
-        ImageView imageView;
-    }
-
 }

@@ -6,18 +6,6 @@
         <item>Biletomaty</item>
         <item>Punkty sprzedaży biletów</item>
         <item>Stacje rowerowe</item>
-        <item>Ustawienia</item>
-        <item>Informacje</item>
     </string-array>
-<<<<<<< HEAD
-    <string-array name="navigation_drawer_option_icons">
-        <item>ic_launcher.png</item>
-        <item>ic_launcher.png</item>
-        <item>ic_launcher.png</item>
-        <item>ic_settings_black_24dp.png</item>
-        <item>ic_info_black_24dp.png</item>
-    </string-array>
-=======
->>>>>>> master
 
 </resources>
