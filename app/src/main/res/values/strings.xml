@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">Nostra</string>
     <string name="title_activity_maps">Map</string>
+
     <string-array name="navigation_drawer_options">
         <item>Biletomaty</item>
         <item>Punkty sprzedaży biletów</item>
         <item>Stacje rowerowe</item>
     </string-array>
+
 </resources>

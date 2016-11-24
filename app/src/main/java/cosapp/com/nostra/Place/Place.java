@@ -5,11 +5,6 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Created by kkoza on 24.11.2016.
  */
-
-/**
- * <p>Class that describes a name of the place and it's coords.</p> *
- */
-
 public abstract class Place {
     private LatLng coordinates;
     private String placeName;

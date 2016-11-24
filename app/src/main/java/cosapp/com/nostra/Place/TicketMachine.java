@@ -3,9 +3,6 @@ package cosapp.com.nostra.Place;
 /**
  * Created by kkoza on 11.11.2016.
  */
-//git master change
-//GITHUB TEST
-    // BRANCH TEST
 public class TicketMachine extends Place {
     private String description;
     private boolean paymentByCreditCardAvailable;
@@ -16,6 +13,16 @@ public class TicketMachine extends Place {
         this.description= "";
         this.paymentByCreditCardAvailable = false;
         this.ID = 0;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                "TicketMachine{" +
+                "description='" + description + '\'' +
+                ", paymentByCreditCardAvailable=" + paymentByCreditCardAvailable +
+                ", ID=" + ID +
+                '}';
     }
 
     public void setDescription(String description) {
@@ -42,10 +49,4 @@ public class TicketMachine extends Place {
         return description;
     }
 
-    public String toString() {
-        return getClass().getName() + "[" +
-                "creditCard=" + paymentByCreditCardAvailable + ", " +
-                "description=" + description + ", " +
-                "ID=" + ID +"]";
-    }
 }
