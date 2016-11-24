@@ -2,6 +2,8 @@ package cosapp.com.nostra;
 
 import android.util.Xml;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -9,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import cosapp.com.nostra.Place.BikeStation;
 
 /**
  * Created by Little on 2016-11-13.
@@ -95,9 +99,8 @@ public class NextBikeXMLParser {
         name = parser.getAttributeValue(null,"name");
         longitude = Double.parseDouble( parser.getAttributeValue(null,"lng"));
         latitude = Double.parseDouble( parser.getAttributeValue(null,"lat"));
-        bikeStation.setName(name);
-        bikeStation.setLongitude(longitude);
-        bikeStation.setLatitude(latitude);
+        bikeStation.setPlaceName(name);
+        bikeStation.setCoordinates(new LatLng(longitude, latitude));
         parser.nextTag();
         parser.require(XmlPullParser.END_TAG,namespace,"place");
 

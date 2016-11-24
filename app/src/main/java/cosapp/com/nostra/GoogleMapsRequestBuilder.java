@@ -8,6 +8,9 @@ import java.util.ArrayList;
  * Created by kkoza on 20.11.2016.
  */
 
+/**
+ * Class for creating requests for Google Maps API
+ */
 public class GoogleMapsRequestBuilder {
     private static final String GOOGLE_MAPS_API_URL = "https://maps.googleapis.com/maps/api/distancematrix/";
     private static final String OUTPUT_FORMAT = "json";
@@ -22,7 +25,7 @@ public class GoogleMapsRequestBuilder {
     private static final String API_KEY = "AIzaSyAn8WHMVkL6gPV45c8M9MRvVwDzXmLtFYI";
 
     /**
-     *  Builds a website for request Google Maps API:
+     *  <p>Builds a website for request Google Maps API:</p>
      *  <ul>
      *      <li>Output format : JSON</li>
      *      <li>Mode : Walking</li>
@@ -31,7 +34,12 @@ public class GoogleMapsRequestBuilder {
      *      <li>Destinations : List of LatLng objects</li>
      *      <li>Key : Google Maps API Key for this app </li>
      *  </ul>
-     * @return String with prepared URL for reqest Google Maps API
+     *
+     * @return String with prepared URL for reqest Google Maps API. Use this String with
+     * <code>JSONReaderTask</code>
+     *
+     * @see cosapp.com.nostra.JSON.JSONReaderTask
+     *
      */
     public static String websiteRequestBuilder(LatLng currentPosition, ArrayList<LatLng> destinations) {
         StringBuilder stringBuilder = new StringBuilder()
@@ -55,7 +63,7 @@ public class GoogleMapsRequestBuilder {
                     .append(latLng.longitude)
                     .append(bar);
         }
-        stringBuilder.deleteCharAt(stringBuilder.length()-1);
+        stringBuilder.deleteCharAt(stringBuilder.length()-1); //delete last | and put & instead
         stringBuilder.append(AMPERSAND);
         stringBuilder.append("key=")
                 .append(API_KEY);
