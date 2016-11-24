@@ -20,20 +20,22 @@ import cosapp.com.nostra.Place.BikeStation;
 public class NextBikeXMLParser {
 
     private final String namespace = null;
+    private XmlPullParser parser;
 
-    public List parse(InputStream inputStream) throws XmlPullParserException, IOException{
+    public List getInfoAboutBikeStations(InputStream inputStream,String countryName, String cityName)
+            throws XmlPullParserException, IOException{
         try{
-            XmlPullParser parser = Xml.newPullParser();
+            parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES,false);
             parser.setInput(inputStream , null);
             parser.nextTag();
-            return readFeed(parser);
+            return readData(countryName,cityName);
         }finally {
             inputStream.close();
         }
     }
 
-    private List readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
+    private List readData(String countryName, String cityName) throws XmlPullParserException, IOException {
         ArrayList<BikeStation> places = new ArrayList<>();
 
         parser.require(XmlPullParser.START_TAG, namespace, "markers");
@@ -42,53 +44,53 @@ public class NextBikeXMLParser {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
-
-            String country = parser.getName();
-            if(country.equals("country")){
-
-                country = parser.getAttributeValue(null,"country");
-                if(country.equals("DE")){
-
-                    parser.require(XmlPullParser.START_TAG,namespace,"country");
-
-                    while(parser.next() != XmlPullParser.END_TAG){
-
-                        if(parser.getEventType() != XmlPullParser.START_TAG){
-                            continue;
-                        }
-
-                        String city = parser.getName();
-                        if(city.equals("city")){
-
-                            city = parser.getAttributeValue(null,"name");
-                            if(city.equals("Poznań")){
-
-                                parser.require(XmlPullParser.START_TAG,namespace,"city");
-                                while (parser.getEventType() != XmlPullParser.START_TAG){
-                                    places.add(readPlace(parser));
-                                }
-
-                            }else{
-                                skip(parser);
-                            }
-
-                        }else{
-                            skip(parser);
-                        }
-                    }
-                }else{
-                    skip(parser);
-                }
-            }else{
-                skip(parser);
-            }
-
-
+                places.addAll(readFrom(countryName,cityName));
         }
         return places;
     }
 
-    private BikeStation readPlace(XmlPullParser parser) throws XmlPullParserException, IOException{
+    private ArrayList<BikeStation> readFrom(String countryName, String cityName) throws IOException,XmlPullParserException{
+        ArrayList<BikeStation> places = new ArrayList<>();
+
+        parser.require(XmlPullParser.START_TAG,namespace,"country");
+
+        String name = parser.getAttributeValue(null,"name");
+        if(name.equals(countryName)){
+            places.addAll(readFromCity(cityName));
+        }else{
+            skip();
+        }
+        return  places;
+    }
+
+    private ArrayList<BikeStation> readFromCity(String cityName) throws XmlPullParserException, IOException{
+        parser.require(XmlPullParser.START_TAG,namespace, "city");
+        String city = parser.getAttributeValue(null , "name");
+        if(city.equals(cityName)){
+            return readCity();
+        }else{
+            skip();
+        }
+        return null;
+    }
+
+    private ArrayList<BikeStation> readCity() throws XmlPullParserException, IOException{
+        ArrayList<BikeStation> places = new ArrayList<>();
+
+        parser.require(XmlPullParser.START_TAG,namespace,"city");
+
+        while (parser.next() != XmlPullParser.END_TAG){
+
+            if(parser.getEventType() != XmlPullParser.START_TAG){
+                continue;
+            }
+
+            places.add(readPlace());
+        }
+        return places;
+    }
+
+    private BikeStation readPlace() throws XmlPullParserException, IOException{
         BikeStation bikeStation = new BikeStation();
         parser.require(XmlPullParser.START_TAG, namespace, "place");
         String name;
@@ -105,7 +107,7 @@ public class NextBikeXMLParser {
         return bikeStation;
     }
 
-    private void skip(XmlPullParser parser) throws XmlPullParserException, IOException {
+    private void skip() throws XmlPullParserException, IOException {
         if (parser.getEventType() != XmlPullParser.START_TAG) {
             throw new IllegalStateException();
         }
@@ -121,6 +123,5 @@ public class NextBikeXMLParser {
             }
         }
     }
-
 
 }
