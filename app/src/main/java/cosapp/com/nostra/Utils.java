@@ -5,8 +5,5 @@ package cosapp.com.nostra;
  */
 public class Utils {
 
-    public static String deleteHTMLTags(String stringWithTags) {
-        return stringWithTags.replaceAll("\\<[^>]*>","");
-    }
 
 }

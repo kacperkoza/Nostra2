@@ -16,6 +16,8 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import cosapp.com.nostra.Place.TicketMachine;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -83,11 +85,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ArrayList<TicketMachine> machines = dataManager.getCoordsAndPlaceNames();
 
         /*for (int i = 0 ; i < machines.size() ; i++) {
-            LatLng latLng = machines.get(i).getLatLng();
+            LatLng latLng = machines.get(i).getCoordinates();
             String name = machines.get(i).getPlaceName();
             mMap.addMarker(new MarkerOptions().position(latLng).title(name));
         }*/
         mMap.addMarker(new MarkerOptions().position(new LatLng(52.405794, 16.930569)).title("Aktualna pozycja"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(machines.get(0).getLatLng(),12.0f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(machines.get(0).getCoordinates(),12.0f));
     }
 }

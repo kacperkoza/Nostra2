@@ -10,9 +10,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cosapp.com.nostra.Place.TicketMachine;
+
 /**
  * Created by kkoza on 19.11.2016.
  */
+
 
 public class JSONParser {
 
@@ -44,7 +47,7 @@ public class JSONParser {
 
             JSONObject geometry = object.getJSONObject("geometry");
             JSONArray coordinates = geometry.getJSONArray("coordinates");
-            ticketMachine.setLatLng(new LatLng(
+            ticketMachine.setCoordinates(new LatLng(
                     (Double) coordinates.get(0),
                     (Double) coordinates.get(1)));
 
@@ -52,7 +55,7 @@ public class JSONParser {
             ticketMachine.setPlaceName(properties.getString("nazwa"));
 
             String description = properties.getString("opis");
-            ticketMachine.setDescription(Utils.deleteHTMLTags(description));
+            ticketMachine.setDescription(deleteHTMLTags(description));
 
             if (properties.has("y_4346_karty_p_atnic"))
                 ticketMachine.setPaymentByCreditCardAvailable(true);
@@ -65,6 +68,11 @@ public class JSONParser {
 
         return machines;
     }
+
+    private static String deleteHTMLTags(String stringWithTags) {
+        return stringWithTags.replaceAll("\\<[^>]*>","");
+    }
+
 
 
 }

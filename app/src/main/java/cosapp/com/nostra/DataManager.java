@@ -10,6 +10,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
+import cosapp.com.nostra.Place.TicketMachine;
+
 /**
  * Created by kkoza on 12.11.2016.
  */
@@ -40,8 +42,8 @@ public class DataManager extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("creditCard", (ticketMachine.isPaymentByCreditCardAvailable() ? 1 : 0));
         contentValues.put("id", ticketMachine.getID());
-        contentValues.put("x", ticketMachine.getLatLng().longitude);
-        contentValues.put("y", ticketMachine.getLatLng().latitude);
+        contentValues.put("x", ticketMachine.getCoordinates().longitude);
+        contentValues.put("y", ticketMachine.getCoordinates().latitude);
         contentValues.put("placeName", ticketMachine.getPlaceName());
         contentValues.put("description", ticketMachine.getDescription());
         db.insertOrThrow("parkingMachines", null, contentValues);
@@ -53,7 +55,7 @@ public class DataManager extends SQLiteOpenHelper {
 
         while (cursor.moveToNext()) {
             TicketMachine ticketMachine = new TicketMachine();
-            ticketMachine.setLatLng(new LatLng(cursor.getDouble(0), cursor.getDouble(1)));
+            ticketMachine.setCoordinates(new LatLng(cursor.getDouble(0), cursor.getDouble(1)));
             ticketMachine.setPlaceName(cursor.getString(2));
             list.add(ticketMachine);
         }
