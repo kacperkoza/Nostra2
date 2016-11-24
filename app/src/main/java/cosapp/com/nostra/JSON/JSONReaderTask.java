@@ -1,4 +1,4 @@
-package cosapp.com.nostra;
+package cosapp.com.nostra.JSON;
 
 import android.os.AsyncTask;
 import android.util.Log;

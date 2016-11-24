@@ -7,10 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,9 +22,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import cosapp.com.nostra.JSON.JSONParser;
+import cosapp.com.nostra.JSON.JSONReaderTask;
 import cosapp.com.nostra.Place.TicketMachine;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -108,7 +107,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(machines.get(0).getCoordinates(),12.0f));
     }
 
-    private void initializeDrawerListView(){
+    private void initializeDrawerListView() {
         mDrawerListOptions = getResources().getStringArray(R.array.navigation_drawer_options);
         mDrawerList = (ListView)findViewById(R.id.left_drawer);
         mDrawerList.setAdapter(new CustomAdapter());

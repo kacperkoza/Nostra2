@@ -1,4 +1,4 @@
-package cosapp.com.nostra;
+package cosapp.com.nostra.JSON;
 
 import android.util.Log;
 
@@ -16,6 +16,18 @@ import cosapp.com.nostra.Place.TicketMachine;
  * Created by kkoza on 19.11.2016.
  */
 
+/**
+ * Parser class for getting data from JSON.
+ *
+ * <ul>
+ *     Contains static methods for getting:
+ *     <li><code>ArrayList</code> of TicketMachine</li>
+ *     <li><code>ArrayList</code> of ParkingMachine</li>
+ *     <li><code>ArrayList</code> of BikeStation</li>
+ *     <li><code>ArrayList</code> of TicketsPoint </li>
+ * </ul>
+ *
+ */
 
 public class JSONParser {
 
