@@ -4,6 +4,9 @@ package cosapp.com.nostra.Place;
  * Created by kkoza on 24.11.2016.
  */
 
+/**
+ * Class which hold an information about parking machines: coords, zone and street.
+ */
 public class ParkingMachine extends Place {
     private char zone;
     private String street;

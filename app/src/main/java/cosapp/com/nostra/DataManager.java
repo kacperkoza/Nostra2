@@ -15,16 +15,21 @@ import cosapp.com.nostra.Place.TicketMachine;
 /**
  * Created by kkoza on 12.11.2016.
  */
+
+/**
+ * <p>SQLite database for writing and reading data.</p>
+ * <p>There are written information about Ticket machines.</p>
+ */
 public class DataManager extends SQLiteOpenHelper {
 
     public DataManager(Context context) {
-        super(context, "parkingMachines.db", null, 1);
+        super(context, "ticketMachines.db", null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(
-                "CREATE TABLE parkingMachines(" +
+                "CREATE TABLE ticketMachines(" +
                         "id INTEGER," +
                         "creditCard INTEGER," +
                         "x REAL," +
@@ -37,6 +42,10 @@ public class DataManager extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
     }
 
+    /**
+     * Adds <code>TicketMachine</code> object to the table parkingMachines
+     * @param ticketMachine
+     */
     public void addTicketMachine(TicketMachine ticketMachine) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -48,6 +57,11 @@ public class DataManager extends SQLiteOpenHelper {
         contentValues.put("description", ticketMachine.getDescription());
         db.insertOrThrow("parkingMachines", null, contentValues);
     }
+
+    /**
+     * Function that reads all coords and place names of ticket machines from database
+     * @return <code>ArrayList</code> of all ticket machines
+     */
 
     public ArrayList<TicketMachine> getCoordsAndPlaceNames(){
         ArrayList<TicketMachine> list = new ArrayList<>(60);
@@ -62,6 +76,11 @@ public class DataManager extends SQLiteOpenHelper {
         return list;
     }
 
+
+    /**
+     * Fucntion for getting coords of all ticket machines for Google Maps API request.
+     * @return <code>ArrayList</code> of all ticket machines coords.
+     */
     public ArrayList<LatLng> getCoords(){
         ArrayList<LatLng> list = new ArrayList<>(60);
         Cursor cursor = makeQuery("x", "y");
@@ -74,10 +93,13 @@ public class DataManager extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * Making query to the ticketMachines.db with desired columns.
+     * @param columns varang argument of desired columns, e.g. "x", "placeName" etc.
+     * @return Cursor
+     */
     private Cursor makeQuery(String... columns) {
         SQLiteDatabase db = getReadableDatabase();
         return db.query("parkingMachines", columns, null, null, null, null, null);
     }
-
-
 }

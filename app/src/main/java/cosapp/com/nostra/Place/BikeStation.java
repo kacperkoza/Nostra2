@@ -5,6 +5,12 @@ import java.util.Arrays;
 /**
  * Created by Little on 2016-11-13.
  */
+
+/**
+ * </p>Class which holds an information about Bike Station: coords, name of the place,
+ * number of free bikes, all racks, free racks,
+ * and free bike's numbers.</p>
+ */
 public class BikeStation extends Place {
 
     private int freeBikes;

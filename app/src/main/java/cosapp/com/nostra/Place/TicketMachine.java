@@ -3,6 +3,11 @@ package cosapp.com.nostra.Place;
 /**
  * Created by kkoza on 11.11.2016.
  */
+
+/**
+ * <p>Class that holds information about Ticket machines: coords, place name, description of place,
+ * availbility of payment by credit card.</p>
+ */
 public class TicketMachine extends Place {
     private String description;
     private boolean paymentByCreditCardAvailable;
