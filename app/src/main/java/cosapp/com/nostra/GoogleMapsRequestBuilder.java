@@ -55,7 +55,7 @@ public class GoogleMapsRequestBuilder {
                     .append(latLng.longitude)
                     .append(bar);
         }
-        stringBuilder.deleteCharAt(stringBuilder.length()-1);
+        stringBuilder.deleteCharAt(stringBuilder.length()-1); //delete last | and put & instead
         stringBuilder.append(AMPERSAND);
         stringBuilder.append("key=")
                 .append(API_KEY);

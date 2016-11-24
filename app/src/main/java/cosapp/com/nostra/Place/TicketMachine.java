@@ -1,4 +1,4 @@
-package cosapp.com.nostra;
+package cosapp.com.nostra.Place;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -9,22 +9,22 @@ import com.google.android.gms.maps.model.LatLng;
 //GITHUB TEST
     // BRANCH TEST
 public class TicketMachine {
-    private LatLng latLng;
+    private LatLng coordinates;
     private String placeName;
     private String description;
     private boolean paymentByCreditCardAvailable;
     private int ID;
 
     public TicketMachine() {
-        this.latLng = new LatLng(0, 0);
+        this.coordinates = new LatLng(0, 0);
         this.placeName = "";
         this.description= "";
         this.paymentByCreditCardAvailable = false;
         this.ID = 0;
     }
 
-    public void setLatLng(LatLng latLng) {
-        this.latLng = latLng;
+    public void setCoordinates(LatLng coordinates) {
+        this.coordinates = coordinates;
     }
 
     public void setPlaceName(String placeName) {
@@ -59,13 +59,13 @@ public class TicketMachine {
         return placeName;
     }
 
-    public LatLng getLatLng() {
-        return latLng;
+    public LatLng getCoordinates() {
+        return coordinates;
     }
 
     public String toString() {
         return getClass().getName() + "[" +
-                "latLng=" + latLng + ", " +
+                "coordinates=" + coordinates + ", " +
                 "name=" + placeName + ", " +
                 "creditCard=" + paymentByCreditCardAvailable + ", " +
                 "description=" + description + ", " +
