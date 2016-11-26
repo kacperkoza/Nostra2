@@ -1,4 +1,4 @@
-package cosapp.com.nostra;
+package cosapp.com.nostra.GoogleMaps;
 
 import com.google.android.gms.maps.model.LatLng;
 

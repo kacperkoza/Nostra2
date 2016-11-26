@@ -1,16 +1,8 @@
-package cosapp.com.nostra;
+package cosapp.com.nostra.Activities;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,19 +11,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
-import cosapp.com.nostra.JSON.JSONParser;
-import cosapp.com.nostra.JSON.JSONReaderTask;
+import cosapp.com.nostra.DataManager;
 import cosapp.com.nostra.Place.TicketMachine;
+import cosapp.com.nostra.R;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private DataManager dataManager;
+    private DataManager mDataManager;
     private ListView mDrawerList;
     private String[] mDrawerListOptions;
     @Override
@@ -39,47 +28,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        initializeDrawerListView();
+        //initializeDrawerListView();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-
-
-        JSONReaderTask jsonReaderTask = new JSONReaderTask(Websites.TICKET_MACHINES.toString());
-        jsonReaderTask.execute();
-
-        String JSONText = null;
-
-        try {
-            JSONText = jsonReaderTask.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        ArrayList<TicketMachine> machines = new ArrayList<>(100);
-
-        if (JSONText != null) {
-            try {
-                machines = JSONParser.getTicketMachines(JSONText);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        dataManager = new DataManager(this);
-
-        for (TicketMachine tm : machines) {
-            dataManager.addTicketMachine(tm);
-        }
-
-        Log.d("website",
-                GoogleMapsRequestBuilder.websiteRequestBuilder
-                        (new LatLng(52.405794, 16.930569), dataManager.getCoords()));
 
     }
 
@@ -96,7 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        ArrayList<TicketMachine> machines = dataManager.getCoordsAndPlaceNames();
+        ArrayList<TicketMachine> machines = mDataManager.getCoordsAndPlaceNames();
 
         /*for (int i = 0 ; i < machines.size() ; i++) {
             LatLng latLng = machines.get(i).getCoordinates();
@@ -107,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(machines.get(0).getCoordinates(),12.0f));
     }
 
-    private void initializeDrawerListView() {
+   /* private void initializeDrawerListView() {
         mDrawerListOptions = getResources().getStringArray(R.array.navigation_drawer_options);
         mDrawerList = (ListView)findViewById(R.id.left_drawer);
         mDrawerList.setAdapter(new CustomAdapter());
@@ -124,9 +78,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         private void selectItem(int position) {
             //TODO
-            /*
+            *//*
             Sprawdzenie który element został wybrany, aktualizacja mapy
-             */
+             *//*
         }
     }
 
@@ -183,10 +137,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             if(mDrawerListOptions.length > 0){
                 holder.textView.setText(mDrawerListOptions[position]);
-                holder.imageView.setImageResource();
+                //holder.imageView.setImageResource();
 
 
             }
+            return null;
         }
-    }
+    }*/
 }

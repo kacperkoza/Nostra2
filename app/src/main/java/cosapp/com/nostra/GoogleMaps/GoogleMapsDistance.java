@@ -1,4 +1,4 @@
-package cosapp.com.nostra;
+package cosapp.com.nostra.GoogleMaps;
 
 /**
  * Created by kkoza on 25.11.2016.
