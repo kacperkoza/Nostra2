@@ -14,7 +14,6 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import cosapp.com.nostra.Activities.MenuActivity;
 import cosapp.com.nostra.DataManager;
 import cosapp.com.nostra.JSON.JSONParser;
 import cosapp.com.nostra.JSON.JSONReaderTask;
