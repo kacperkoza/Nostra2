@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import cosapp.com.nostra.GoogleMapsDistance;
+import cosapp.com.nostra.GoogleMaps.GoogleMapsDistance;
 import cosapp.com.nostra.Place.TicketMachine;
 
 /**
