@@ -5,7 +5,7 @@ package cosapp.com.nostra;
  */
 
 /**
- * <p>URLs of websites that containts data</p>
+ * <p>This holds URLs of websites with:</p>
  * <ul>
  *     <li>Ticket machines - JSON</li>
  *     <li>Bike stations - XML</li>
@@ -14,26 +14,16 @@ package cosapp.com.nostra;
  * </ul>
  */
 
-enum Websites {
-    TICKET_MACHINES ("http://www.poznan.pl/mim/plan/map_service.html?" +
-            "mtype=pub_transport&co=class_objects&class_id=4000"),
+public final class Websites {
+    public static final String TICKET_MACHINES = "http://www.poznan.pl/mim/plan/map_service.html?" +
+            "mtype=pub_transport&co=class_objects&class_id=4000";
 
-    BIKE_STATIONS("https://nextbike.net/maps/nextbike-official.xml"),
+    public static final String BIKE_STATIONS = "https://nextbike.net/maps/nextbike-official.xml";
 
-    PARKING_MACHINES("http://www.poznan.pl/mim/plan/map_service.html?" +
-            "mtype=pub_transport&co=parking_meters"),
+    public static final String PARKING_MACHINES = "http://www.poznan.pl/mim/plan/map_service.html?" +
+            "mtype=pub_transport&co=parking_meters";
 
-    TICKETS_SALE_POINTS("http://www.poznan.pl/mim/plan/map_service.html" +
-            "?mtype=pub_transport&co=class_objects&class_id=4803");
+    public static final String TICKETS_SALE_POINTS = "http://www.poznan.pl/mim/plan/map_service.html" +
+            "?mtype=pub_transport&co=class_objects&class_id=4803";
 
-    private final String website;
-
-    Websites(String s) {
-        website = s;
-    }
-
-    @Override
-    public String toString() {
-        return website;
-    }
 }
