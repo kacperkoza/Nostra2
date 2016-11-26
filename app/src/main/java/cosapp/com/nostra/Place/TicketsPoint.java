@@ -6,6 +6,6 @@ package cosapp.com.nostra.Place;
 
 //TODO finish after succesful implementation of parking, ticket, bike
 
-public class TicketsPoint extends Place {
+//public class TicketsPoint extends Place {
 
-}
+//}

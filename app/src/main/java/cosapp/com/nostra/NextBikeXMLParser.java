@@ -91,7 +91,7 @@ public class NextBikeXMLParser {
     }
 
     private BikeStation readPlace() throws XmlPullParserException, IOException{
-        BikeStation bikeStation = new BikeStation();
+        BikeStation bikeStation = new BikeStation(5);
         parser.require(XmlPullParser.START_TAG, namespace, "place");
         String name;
         double longitude;

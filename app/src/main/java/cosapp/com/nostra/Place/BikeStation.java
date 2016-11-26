@@ -19,7 +19,7 @@ public class BikeStation extends Place {
     private int[] bikesNumbers;
 
     public BikeStation(int NUMBER_OF_BIKES) {
-        super();
+        super(null, "");
         freeBikes = 0;
         allBikeRacks = 0;
         freeBikeRacks = 0;

@@ -12,7 +12,7 @@ public class ParkingMachine extends Place {
     private String street;
 
     public ParkingMachine() {
-        super();
+        super(null, "");
         zone = '0';
         street = "";
     }
