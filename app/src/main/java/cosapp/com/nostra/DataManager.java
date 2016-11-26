@@ -55,7 +55,7 @@ public class DataManager extends SQLiteOpenHelper {
         contentValues.put("y", ticketMachine.getCoordinates().latitude);
         contentValues.put("placeName", ticketMachine.getPlaceName());
         contentValues.put("description", ticketMachine.getDescription());
-        db.insertOrThrow("parkingMachines", null, contentValues);
+        db.insertOrThrow("ticketMachines", null, contentValues);
     }
 
     /**
@@ -100,6 +100,6 @@ public class DataManager extends SQLiteOpenHelper {
      */
     private Cursor makeQuery(String... columns) {
         SQLiteDatabase db = getReadableDatabase();
-        return db.query("parkingMachines", columns, null, null, null, null, null);
+        return db.query("ticketMachines", columns, null, null, null, null, null);
     }
 }
