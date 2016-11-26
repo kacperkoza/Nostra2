@@ -1,35 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_PEKA"
+            android:icon="@drawable/ic_tv_white_18dp"
+            android:title="@string/PEKA" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_bikes"
+            android:icon="@drawable/ic_directions_bike_white_18dp"
+            android:title="@string/city_bikes" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/nav_tickets"
+            android:icon="@android:drawable/ic_delete"
+            android:title="@string/ticket_machines" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:icon="@drawable/ic_time_to_leave_white_18dp"
+            android:title="@string/parking_machines" />
+        <item
+            android:id="@+id/nav_ticket_points"
+            android:icon="@android:drawable/ic_dialog_alert"
+            android:title="@string/ticket_points"/>
     </group>
 
-    <item android:title="Communicate">
-        <menu>
+    <item android:title="@string/other"
+        >
+
+        <menu android:checkableBehavior="single">
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings_white_18dp"
+                android:title="@string/settings" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_informations"
+                android:icon="@drawable/ic_info_outline_white_18dp"
+                android:title="@string/informations" />
+
+            <item
+                android:id="@+id/nav_help"
+                android:icon="@drawable/ic_help_outline_white_18dp"
+                android:title="@string/help" />
         </menu>
     </item>
 

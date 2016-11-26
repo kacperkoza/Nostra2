@@ -2,10 +2,39 @@
     <string name="app_name">Nostra</string>
     <string name="title_activity_maps">Map</string>
 
+    <!-- Splash Screen Activity -->
+    <string name="loading_data">ładujemy dane. proszę czekać.</string>
+    <!-- NAGIVATION MENU OPTIONS -->
+    <string name="PEKA">Monitor PEKA</string>
+    <string name="city_bikes">Rowery miejskie</string>
+    <string name="ticket_machines">Biletomaty</string>
+    <string name="parking_machines">Parkomaty</string>
+    <string name="ticket_points">Punkty sprzedaży biletów</string>
+
+    <string name="other">Inne</string>
+
+    <string name="settings">Ustawienia</string>
+    <string name="informations">Informacje</string>
+    <string name="help">Pomoc</string>
+
+
+
+
+
+
     <string-array name="navigation_drawer_options">
         <item>Biletomaty</item>
         <item>Punkty sprzedaży biletów</item>
         <item>Stacje rowerowe</item>
     </string-array>
+    <string name="title_activity_menu">MenuActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
