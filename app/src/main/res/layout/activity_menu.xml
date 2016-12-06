@@ -21,9 +21,14 @@
             <!-- The main content view where fragments are loaded -->
 
         <FrameLayout
-            android:id="@+id/flContent"
+            android:id="@+id/mapContent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="700px" />
+
+        <FrameLayout
+            android:id="@+id/listContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
 

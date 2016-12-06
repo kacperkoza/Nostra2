@@ -1,5 +1,7 @@
 package cosapp.com.nostra.JSON;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -51,8 +53,6 @@ public class JSONParser {
         JSONArray features = input.getJSONArray("features");
 
         for (int i = 0; i < features.length(); i++) {
-            TicketMachine ticketMachine = new TicketMachine();
-
             JSONObject object = features.getJSONObject(i);
             JSONObject geometry = object.getJSONObject("geometry");
             JSONArray coordinates = geometry.getJSONArray("coordinates");
@@ -90,15 +90,21 @@ public class JSONParser {
      */
     public static ArrayList<GoogleMapsDistance> parseGoogleMapsResponse(String response) throws JSONException {
         ArrayList<GoogleMapsDistance> list = new ArrayList<>(100);
+        Log.d("RESPONSE PARSER", response);
 
         JSONObject jsonObject = new JSONObject(response);
         JSONArray destinationAddresses = jsonObject.getJSONArray("destination_addresses");
+
         JSONArray rows = jsonObject.getJSONArray("rows");
-        JSONArray elements = rows.getJSONArray(0);
+
+        JSONObject object = rows.getJSONObject(0);
+        JSONArray elements = object.getJSONArray("elements");
 
         for (int i = 0; i < elements.length(); i++) {
-            JSONObject distance = elements.getJSONObject(i);
-            JSONObject duration = elements.getJSONObject(i);
+            JSONObject obj = elements.getJSONObject(i);
+
+            JSONObject distance = obj.getJSONObject("distance");
+            JSONObject duration = obj.getJSONObject("duration");
             int distanceInMeters = distance.getInt("value");
             int durationInSeconds = duration.getInt("value");
             String address = destinationAddresses.getString(i);

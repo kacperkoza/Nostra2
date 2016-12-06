@@ -22,7 +22,7 @@ public class GoogleMapsRequestBuilder {
     private static final String DESTINATIONS = "destinations=";
     private static final String how_call_it = "%2C";
     private static final String bar = "|";
-    private static final String API_KEY = "AIzaSyAn8WHMVkL6gPV45c8M9MRvVwDzXmLtFYI";
+    private static final String API_KEY = "AIzaSyCo9VFAnMjE99Jtyt4OH44zxLjjbKEUVcE";
 
     /**
      *  <p>Builds a website for request Google Maps API:</p>
