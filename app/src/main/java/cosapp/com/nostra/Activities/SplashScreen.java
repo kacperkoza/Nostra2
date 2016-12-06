@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -53,7 +54,14 @@ public class SplashScreen extends Activity {
         if (isFirstRun()) {
             loadData();
         }
-        startMainActivity();
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                startMainActivity();
+            }
+        };
+        handler.postDelayed(runnable, 3000);
 
     }
 
