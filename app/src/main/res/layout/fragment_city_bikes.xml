@@ -2,13 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cosapp.com.nostra.Fragments.GoogleMapsFragment">
+    tools:context="cosapp.com.nostra.Fragments.CityBikesFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <fragment
-        android:id="@+id/map"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.google.android.gms.maps.MapFragment" />
+        android:text="@string/hello_blank_fragment" />
 
 </FrameLayout>

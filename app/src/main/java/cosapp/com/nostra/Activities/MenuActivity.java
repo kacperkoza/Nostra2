@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import cosapp.com.nostra.Fragments.GoogleMapsFragment;
+import cosapp.com.nostra.Fragments.ItemFragment;
 import cosapp.com.nostra.R;
 
 public class MenuActivity extends AppCompatActivity
@@ -121,9 +122,10 @@ public class MenuActivity extends AppCompatActivity
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment = null;
+        Fragment fragmentList = null;
         Class fragmentClass;
         switch(menuItem.getItemId()) {
-            case R.id.nav_settings:
+            case R.id.nav_tickets:
                 fragmentClass = GoogleMapsFragment.class;
                 Log.d("switch-case", "id=nav_settings");
                 break;
@@ -135,13 +137,17 @@ public class MenuActivity extends AppCompatActivity
 
         try {
             fragment = (Fragment) fragmentClass.newInstance();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+        ItemFragment itemFragment = new ItemFragment();
 
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.mapContent, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.listContent, itemFragment).commit();
+
 
 
         // Highlight the selected item has been done by NavigationView
@@ -158,7 +164,8 @@ public class MenuActivity extends AppCompatActivity
         mDrawer.closeDrawers();
 
     }
+    private void loadFragment() {
 
-
+    }
 
 }
