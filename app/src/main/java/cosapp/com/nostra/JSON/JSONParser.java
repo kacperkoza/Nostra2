@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import cosapp.com.nostra.GoogleMaps.GoogleMapsDistance;
+import cosapp.com.nostra.Place.ParkingMachine;
 import cosapp.com.nostra.Place.TicketMachine;
 
 /**
@@ -94,15 +95,12 @@ public class JSONParser {
 
         JSONObject jsonObject = new JSONObject(response);
         JSONArray destinationAddresses = jsonObject.getJSONArray("destination_addresses");
-
         JSONArray rows = jsonObject.getJSONArray("rows");
-
         JSONObject object = rows.getJSONObject(0);
         JSONArray elements = object.getJSONArray("elements");
 
         for (int i = 0; i < elements.length(); i++) {
             JSONObject obj = elements.getJSONObject(i);
-
             JSONObject distance = obj.getJSONObject("distance");
             JSONObject duration = obj.getJSONObject("duration");
             int distanceInMeters = distance.getInt("value");
@@ -112,6 +110,27 @@ public class JSONParser {
         }
         return list;
     }
+
+    public static ArrayList<ParkingMachine> parseTicketMachines(String input) throws JSONException {
+        ArrayList<ParkingMachine> list = new ArrayList<>(70);
+
+        JSONObject jsonObject = new JSONObject(input);
+        JSONArray elements = jsonObject.getJSONArray("features");
+
+        for (int i = 0 ; i < elements.length() ; i++) {
+            ParkingMachine pm = new ParkingMachine();
+            JSONObject object = elements.getJSONObject(i);
+            JSONObject geometry = object.getJSONObject("geometry");
+            JSONArray coordinates = geometry.getJSONArray("coordinates");
+            JSONObject properties = object.getJSONObject("properties");
+            LatLng coords = new LatLng(coordinates.getDouble(0), coordinates.getDouble(1));
+            String zone = properties.getString("zone");
+            String street = properties.getString("street");
+            list.add(new ParkingMachine(coords, "", zone, street));
+        }
+        return list;
+    }
+
 }
 
 
