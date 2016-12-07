@@ -12,10 +12,11 @@
             android:icon="@drawable/ic_directions_bike_white_18dp"
             android:title="@string/city_bikes" />
         <item
-            android:id="@+id/nav_tickets"
+            android:id="@+id/nav_ticket_machines"
             android:icon="@android:drawable/ic_delete"
             android:title="@string/ticket_machines" />
         <item
+            android:id="@+id/nav_parking_machines"
             android:icon="@drawable/ic_time_to_leave_white_18dp"
             android:title="@string/parking_machines" />
         <item
