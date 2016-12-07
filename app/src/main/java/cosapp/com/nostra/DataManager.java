@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
+import cosapp.com.nostra.Place.ParkingMachine;
 import cosapp.com.nostra.Place.TicketMachine;
 
 /**
@@ -23,7 +24,7 @@ import cosapp.com.nostra.Place.TicketMachine;
 public class DataManager extends SQLiteOpenHelper {
 
     public DataManager(Context context) {
-        super(context, "ticketMachines.db", null, 1);
+        super(context, "Nostra.db", null, 1);
     }
 
     @Override
@@ -36,6 +37,13 @@ public class DataManager extends SQLiteOpenHelper {
                         "y REAL," +
                         "placeName TEXT," +
                         "description TEXT);");
+
+        sqLiteDatabase.execSQL(
+                "CREATE TABLE parkingMachines(" +
+                        "x REAL," +
+                        "y REAL," +
+                        "street TEXT," +
+                        "zone TEXT);");
     }
 
     @Override
@@ -58,14 +66,39 @@ public class DataManager extends SQLiteOpenHelper {
         db.insertOrThrow("ticketMachines", null, contentValues);
     }
 
+    public void addParkingMachineToTheDatabase(ParkingMachine parkingMachine) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("x", parkingMachine.getCoordinates().longitude);
+        contentValues.put("y", parkingMachine.getCoordinates().latitude);
+        contentValues.put("street", parkingMachine.getStreet());
+        contentValues.put("zone", parkingMachine.getZone());
+        db.insertOrThrow("parkingMachines", null, contentValues);
+    }
+
     /**
      * Function that reads all coords and place names of ticket machines from database
      * @return <code>ArrayList</code> of all ticket machines
      */
 
+    public ArrayList<ParkingMachine> getParkingMachines() {
+        ArrayList<ParkingMachine> list = new ArrayList<>(60);
+        Cursor cursor = makeQuery("parkingMachines", "x", "y", "zone", "street");
+
+        while (cursor.moveToNext()) {
+            Double x = cursor.getDouble(0);
+            Double y = cursor.getDouble(1);
+            String zone = cursor.getString(2);
+            String street = cursor.getString(3);
+            ParkingMachine parkingMachine = new ParkingMachine(new LatLng(x, y), "", zone, street);
+            list.add(parkingMachine);
+        }
+        return list;
+    }
+
     public ArrayList<TicketMachine> getCoordsAndPlaceNames(){
         ArrayList<TicketMachine> list = new ArrayList<>(60);
-        Cursor cursor = makeQuery("x", "y", "placeName");
+        Cursor cursor = makeQuery("ticketMachines", "x", "y", "placeName");
 
         while (cursor.moveToNext()) {
             TicketMachine ticketMachine = new TicketMachine();
@@ -83,7 +116,7 @@ public class DataManager extends SQLiteOpenHelper {
      */
     public ArrayList<LatLng> getCoords(){
         ArrayList<LatLng> list = new ArrayList<>(60);
-        Cursor cursor = makeQuery("x", "y");
+        Cursor cursor = makeQuery("parkingMachines", "x", "y");
 
         while (cursor.moveToNext()) {
             LatLng latLng = new LatLng(cursor.getDouble(0), cursor.getDouble(1));
@@ -98,8 +131,8 @@ public class DataManager extends SQLiteOpenHelper {
      * @param columns varang argument of desired columns, e.g. "x", "placeName" etc.
      * @return Cursor
      */
-    private Cursor makeQuery(String... columns) {
+    private Cursor makeQuery(String tableName, String... columns) {
         SQLiteDatabase db = getReadableDatabase();
-        return db.query("ticketMachines", columns, null, null, null, null, null);
+        return db.query(tableName, columns, null, null, null, null, null);
     }
 }
