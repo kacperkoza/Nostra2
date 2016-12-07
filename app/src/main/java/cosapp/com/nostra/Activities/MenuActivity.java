@@ -13,8 +13,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import cosapp.com.nostra.Fragments.GoogleMapsFragment;
+import cosapp.com.nostra.Fragments.TicketMachinesFragment;
 import cosapp.com.nostra.Fragments.ItemFragment;
+import cosapp.com.nostra.Fragments.ParkingMachinesFragment;
 import cosapp.com.nostra.R;
 
 public class MenuActivity extends AppCompatActivity
@@ -125,13 +126,17 @@ public class MenuActivity extends AppCompatActivity
         Fragment fragmentList = null;
         Class fragmentClass;
         switch(menuItem.getItemId()) {
-            case R.id.nav_tickets:
-                fragmentClass = GoogleMapsFragment.class;
+            case R.id.nav_ticket_machines:
+                fragmentClass = TicketMachinesFragment.class;
                 Log.d("switch-case", "id=nav_settings");
                 break;
 
+            case R.id.nav_parking_machines:
+                fragmentClass = ParkingMachinesFragment.class;
+                Log.d("Switch-case", "id=nav_parking-machines");
+                break;
             default:
-                fragmentClass = GoogleMapsFragment.class;
+                fragmentClass = TicketMachinesFragment.class;
                 break;
         }
 
@@ -146,7 +151,7 @@ public class MenuActivity extends AppCompatActivity
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.mapContent, fragment).commit();
-        fragmentManager.beginTransaction().replace(R.id.listContent, itemFragment).commit();
+        //fragmentManager.beginTransaction().replace(R.id.listContent, itemFragment).commit();
 
 
 
