@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 import cosapp.com.nostra.DataManager;
 import cosapp.com.nostra.JSON.JSONParser;
 import cosapp.com.nostra.JSON.JSONReaderTask;
+import cosapp.com.nostra.Place.ParkingMachine;
 import cosapp.com.nostra.Place.TicketMachine;
 import cosapp.com.nostra.R;
 import cosapp.com.nostra.Websites;
@@ -52,7 +53,7 @@ public class SplashScreen extends Activity {
     protected void onResume() {
         super.onResume();
         if (isFirstRun()) {
-            loadData();
+            addObjectsToDatabase();
         }
         Handler handler = new Handler();
         Runnable runnable = new Runnable() {
@@ -77,12 +78,43 @@ public class SplashScreen extends Activity {
         return isFirstRun;
     }
 
-    private void loadData() {
-        loadTicketMachinesFromWebsiteAndSaveInDatabase();
+    private void addObjectsToDatabase() {
+        addTicketMachines();
+        addParkingMachines();
     }
 
-    private void loadTicketMachinesFromWebsiteAndSaveInDatabase() {
-        JSONReaderTask task = new JSONReaderTask(Websites.TICKET_MACHINES);
+    private void addTicketMachines() {
+            JSONReaderTask task = new JSONReaderTask(Websites.TICKET_MACHINES);
+            task.execute();
+
+            String result = null;
+            try {
+                result = task.get();
+            } catch (InterruptedException e) {
+                Log.e("loadData", "InterruptedException");
+            } catch (ExecutionException e) {
+                Log.e("loadData", "InterruptedException");
+            }
+
+            ArrayList<TicketMachine> ticketMachines = null;
+
+            if (result != null) {
+                try {
+                    ticketMachines = JSONParser.getTicketMachines(result);
+                } catch (JSONException e) {
+                    Log.e("loadData", "JSONException");
+                }
+            }
+
+            if (ticketMachines != null) {
+                for (TicketMachine tm : ticketMachines) {
+                    dataManager.addTicketMachine(tm);
+                }
+            }
+        }
+
+    private void addParkingMachines() {
+        JSONReaderTask task = new JSONReaderTask(Websites.PARKING_MACHINES);
         task.execute();
 
         String result = null;
@@ -94,21 +126,22 @@ public class SplashScreen extends Activity {
             Log.e("loadData", "InterruptedException");
         }
 
-        ArrayList<TicketMachine> ticketMachines = null;
+        ArrayList<ParkingMachine> parkingMachines = null;
 
         if (result != null) {
             try {
-                ticketMachines = JSONParser.getTicketMachines(result);
+                parkingMachines = JSONParser.parseTicketMachines(result);
             } catch (JSONException e) {
                 Log.e("loadData", "JSONException");
             }
         }
 
-        if (ticketMachines != null) {
-            for (TicketMachine tm : ticketMachines) {
-                dataManager.addTicketMachine(tm);
+        if (parkingMachines != null) {
+            for (ParkingMachine pm : parkingMachines) {
+                dataManager.addParkingMachineToTheDatabase(pm);
             }
         }
+
     }
 
     private void startMainActivity() {
