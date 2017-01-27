@@ -70,8 +70,6 @@ public class ItemFragment extends ListFragment {
             e.printStackTrace();
         }
 
-//            Collections.sort(distances);
-
         ParkingMachineListAdapter adapter = new ParkingMachineListAdapter(getActivity(), distances);
         setListAdapter(adapter);
         //BELOW WORKS!!!

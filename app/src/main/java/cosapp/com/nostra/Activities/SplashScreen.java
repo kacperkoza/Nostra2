@@ -108,7 +108,7 @@ public class SplashScreen extends Activity {
 
             if (ticketMachines != null) {
                 for (TicketMachine tm : ticketMachines) {
-                    dataManager.addTicketMachine(tm);
+                    dataManager.addTicketMachineToDatabase(tm);
                 }
             }
         }

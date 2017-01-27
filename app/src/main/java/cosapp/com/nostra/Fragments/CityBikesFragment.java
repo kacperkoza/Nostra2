@@ -30,7 +30,6 @@ public class CityBikesFragment extends android.support.v4.app.Fragment implement
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-       // mDataManager = new DataManager(getActivity());
         return view;
     }
 

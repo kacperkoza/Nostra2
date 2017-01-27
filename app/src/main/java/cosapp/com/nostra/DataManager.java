@@ -19,7 +19,8 @@ import cosapp.com.nostra.Place.TicketMachine;
 
 /**
  * <p>SQLite database for writing and reading data.</p>
- * <p>There are written information about Ticket machines.</p>
+ * <p>Saving and getting information about Ticket machines and parking machines.</p>
+ * <p>Tables: parkingMachines and ticketMachines.</p>
  */
 public class DataManager extends SQLiteOpenHelper {
 
@@ -54,7 +55,7 @@ public class DataManager extends SQLiteOpenHelper {
      * Adds <code>TicketMachine</code> object to the table parkingMachines
      * @param ticketMachine
      */
-    public void addTicketMachine(TicketMachine ticketMachine) {
+    public void addTicketMachineToDatabase(TicketMachine ticketMachine) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("creditCard", (ticketMachine.isPaymentByCreditCardAvailable() ? 1 : 0));
@@ -98,12 +99,13 @@ public class DataManager extends SQLiteOpenHelper {
 
     public ArrayList<TicketMachine> getCoordsAndPlaceNames(){
         ArrayList<TicketMachine> list = new ArrayList<>(60);
-        Cursor cursor = makeQuery("ticketMachines", "x", "y", "placeName");
+        Cursor cursor = makeQuery("ticketMachines", "x", "y", "placeName", "description");
 
         while (cursor.moveToNext()) {
             TicketMachine ticketMachine = new TicketMachine();
             ticketMachine.setCoordinates(new LatLng(cursor.getDouble(0), cursor.getDouble(1)));
             ticketMachine.setPlaceName(cursor.getString(2));
+            ticketMachine.setDescription(cursor.getString(3));
             list.add(ticketMachine);
         }
         return list;

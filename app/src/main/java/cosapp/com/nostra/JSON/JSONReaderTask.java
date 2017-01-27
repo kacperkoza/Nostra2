@@ -23,7 +23,7 @@ public class JSONReaderTask extends AsyncTask<Void, Void, String> {
      * @param websiteURL URL of website with JSON code
      */
     public JSONReaderTask(String websiteURL) {
-    this.websiteURL = websiteURL;
+        this.websiteURL = websiteURL;
     }
 
     protected String doInBackground(Void... voids) {

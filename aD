@@ -1,0 +1,333 @@
+[1mdiff --git a/app/src/main/java/cosapp/com/nostra/Activities/MenuActivity.java b/app/src/main/java/cosapp/com/nostra/Activities/MenuActivity.java[m
+[1mindex 486bfa4..e0faf82 100644[m
+[1m--- a/app/src/main/java/cosapp/com/nostra/Activities/MenuActivity.java[m
+[1m+++ b/app/src/main/java/cosapp/com/nostra/Activities/MenuActivity.java[m
+[36m@@ -38,9 +38,6 @@[m [mpublic class MenuActivity extends AppCompatActivity[m
+         mDrawer.setDrawerListener(toggle);[m
+         toggle.syncState();[m
+ [m
+[31m-        /*NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);[m
+[31m-        navigationView.setNavigationItemSelectedListener(this);[m
+[31m-*/[m
+         nvDrawer = (NavigationView) findViewById(R.id.nav_view);[m
+ [m
+ [m
+[1mdiff --git a/app/src/main/java/cosapp/com/nostra/Activities/SplashScreen.java b/app/src/main/java/cosapp/com/nostra/Activities/SplashScreen.java[m
+[1mindex 768d650..c95d968 100644[m
+[1m--- a/app/src/main/java/cosapp/com/nostra/Activities/SplashScreen.java[m
+[1m+++ b/app/src/main/java/cosapp/com/nostra/Activities/SplashScreen.java[m
+[36m@@ -108,7 +108,7 @@[m [mpublic class SplashScreen extends Activity {[m
+ [m
+             if (ticketMachines != null) {[m
+                 for (TicketMachine tm : ticketMachines) {[m
+[31m-                    dataManager.addTicketMachine(tm);[m
+[32m+[m[32m                    dataManager.addTicketMachineToDatabase(tm);[m
+                 }[m
+             }[m
+         }[m
+[1mdiff --git a/app/src/main/java/cosapp/com/nostra/Fragments/CityBikesFragment.java b/app/src/main/java/cosapp/com/nostra/Fragments/CityBikesFragment.java[m
+[1mindex 31e23cc..7607b33 100644[m
+[1m--- a/app/src/main/java/cosapp/com/nostra/Fragments/CityBikesFragment.java[m
+[1m+++ b/app/src/main/java/cosapp/com/nostra/Fragments/CityBikesFragment.java[m
+[36m@@ -30,7 +30,6 @@[m [mpublic class CityBikesFragment extends android.support.v4.app.Fragment implement[m
+                 .findFragmentById(R.id.map);[m
+         mapFragment.getMapAsync(this);[m
+ [m
+[31m-       // mDataManager = new DataManager(getActivity());[m
+         return view;[m
+     }[m
+ [m
+[1mdiff --git a/app/src/main/java/cosapp/com/nostra/Fragments/ItemFragment.java b/app/src/main/java/cosapp/com/nostra/Fragments/ItemFragment.java[m
+[1mindex 5811b3b..cf4e00b 100644[m
+[1m--- a/app/src/main/java/cosapp/com/nostra/Fragments/ItemFragment.java[m
+[1m+++ b/app/src/main/java/cosapp/com/nostra/Fragments/ItemFragment.java[m
+[36m@@ -70,8 +70,6 @@[m [mpublic class ItemFragment extends ListFragment {[m
+             e.printStackTrace();[m
+         }[m
+ [m
+[31m-//            Collections.sort(distances);[m
+[31m-[m
+         ParkingMachineListAdapter adapter = new ParkingMachineListAdapter(getActivity(), distances);[m
+         setListAdapter(adapter);[m
+         //BELOW WORKS!!![m
+[1mdiff --git a/app/src/main/java/cosapp/com/nostra/Fragments/TicketMachinesFragment.java b/app/src/main/java/cosapp/com/nostra/Fragments/TicketMachinesFragment.java[m
+[1mindex a5fef04..ec4c84b 100644[m
+[1m--- a/app/src/main/java/cosapp/com/nostra/Fragments/TicketMachinesFragment.java[m
+[1m+++ b/app/src/main/java/cosapp/com/nostra/Fragments/TicketMachinesFragment.java[m
+[36m@@ -1,12 +1,16 @@[m
+ package cosapp.com.nostra.Fragments;[m
+ [m
+ [m
+[32m+[m[32mimport android.content.Context;[m
+[32m+[m[32mimport android.graphics.Color;[m
+ import android.os.Bundle;[m
+ import android.support.annotation.Nullable;[m
+ import android.support.v4.app.Fragment;[m
+ import android.view.LayoutInflater;[m
+ import android.view.View;[m
+ import android.view.ViewGroup;[m
+[32m+[m[32mimport android.widget.ImageView;[m
+[32m+[m[32mimport android.widget.TextView;[m
+ [m
+ import com.google.android.gms.maps.CameraUpdateFactory;[m
+ import com.google.android.gms.maps.GoogleMap;[m
+[36m@@ -14,6 +18,7 @@[m [mimport com.google.android.gms.maps.OnMapReadyCallback;[m
+ import com.google.android.gms.maps.SupportMapFragment;[m
+ import com.google.android.gms.maps.model.BitmapDescriptorFactory;[m
+ import com.google.android.gms.maps.model.LatLng;[m
+[32m+[m[32mimport com.google.android.gms.maps.model.Marker;[m
+ import com.google.android.gms.maps.model.MarkerOptions;[m
+ [m
+ import java.util.ArrayList;[m
+[36m@@ -29,6 +34,7 @@[m [mimport cosapp.com.nostra.R;[m
+ public class TicketMachinesFragment extends android.support.v4.app.Fragment implements OnMapReadyCallback {[m
+     private DataManager mDataManager;[m
+     private GoogleMap mMap;[m
+[32m+[m[32m    private ArrayList<TicketMachine> machines;[m
+ [m
+     @Override[m
+     public View onCreateView(LayoutInflater inflater, ViewGroup container,[m
+[36m@@ -54,17 +60,50 @@[m [mpublic class TicketMachinesFragment extends android.support.v4.app.Fragment impl[m
+     public void onMapReady(GoogleMap googleMap) {[m
+         mMap = googleMap;[m
+ [m
+[31m-        ArrayList<TicketMachine> machines = mDataManager.getCoordsAndPlaceNames();[m
+[32m+[m[32m        machines = mDataManager.getCoordsAndPlaceNames();[m
+ [m
+[31m-        for (int i = 0 ; i < machines.size() ; i++) {[m
+[31m-            LatLng latLng = machines.get(i).getCoordinates();[m
+[31m-            String name = machines.get(i).getPlaceName();[m
+[31m-            mMap.addMarker(new MarkerOptions().position(latLng).title(name));[m
+[32m+[m
+[32m+[m[32m        mMap.setInfoWindowAdapter(new TicketMachinesInfoWindow());[m
+[32m+[m
+[32m+[m[32m        for (TicketMachine tm : machines) {[m
+[32m+[m[32m            LatLng latLng = tm.getCoordinates();[m
+[32m+[m[32m            String name = tm.getPlaceName();[m
+[32m+[m[32m            String description = tm.getDescription();[m
+[32m+[m[32m            mMap.addMarker(new MarkerOptions()[m
+[32m+[m[32m                    .position(latLng)[m
+[32m+[m[32m                    .title(name)[m
+[32m+[m[32m                    .snippet(description));[m
+         }[m
+         mMap.addMarker(new MarkerOptions().position(new LatLng(52.405794, 16.930569)).title("Aktualna pozycja")[m
+[31m-        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));[m
+[31m-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(machines.get(0).getCoordinates(),12.0f));[m
+[32m+[m[32m                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));[m
+[32m+[m[32m        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(machines.get(0).getCoordinates(), 12.0f));[m
+[32m+[m[32m    }[m
+ [m
+[32m+[m[32m    private class TicketMachinesInfoWindow implements GoogleMap.InfoWindowAdapter {[m
+[32m+[m[32m        private View view;[m
+ [m
+[32m+[m[32m        @Override[m
+[32m+[m[32m        public View getInfoWindow(Marker marker) {[m
+[32m+[m[32m            LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );[m
+[32m+[m[32m            view = layoutInflater.inflate(R.layout.info_window_ticket_machines, null);[m
+[32m+[m[32m            view.setBackgroundResource(R.drawable.info_window_gradient);[m
+[32m+[m[32m            TextView title = (TextView) view.findViewById(R.id.place_textView);[m
+[32m+[m[32m            TextView description = (TextView) view.findViewById(R.id.description_textView);[m
+[32m+[m[32m            ImageView creditCards = (ImageView) view.findViewById(R.id.credit_card_imageView);[m
+[32m+[m[32m            title.setText(marker.getTitle());[m
+[32m+[m[32m            description.setText(marker.getSnippet());[m
+[32m+[m[32m            title.setTextColor(Color.BLACK);[m
+[32m+[m[32m            description.setTextColor(Color.BLACK);[m
+[32m+[m
+[32m+[m[32m            return view;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        @Override[m
+[32m+[m[32m        public View getInfoContents(Marker marker) {[m
+[32m+[m[32m            LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );[m
+[32m+[m[32m            view = layoutInflater.inflate(R.layout.info_window_ticket_machines, null);[m
+[32m+[m[32m            view.setBackgroundResource(R.drawable.info_window_gradient);[m
+[32m+[m[32m            return view;[m
+[32m+[m[32m        }[m
+     }[m
+ }[m
+[1mdiff --git a/app/src/main/java/cosapp/com/nostra/GoogleMaps/GoogleMapsRequestBuilder.java b/app/src/main/java/cosapp/com/nostra/GoogleMaps/GoogleMapsRequestBuilder.java[m
+[1mindex 3dea056..ded6c9f 100644[m
+[1m--- a/app/src/main/java/cosapp/com/nostra/GoogleMaps/GoogleMapsRequestBuilder.java[m
+[1m+++ b/app/src/main/java/cosapp/com/nostra/GoogleMaps/GoogleMapsRequestBuilder.java[m
+[36m@@ -12,16 +12,7 @@[m [mimport java.util.ArrayList;[m
+  * Class for creating requests for Google Maps API[m
+  */[m
+ public class GoogleMapsRequestBuilder {[m
+[31m-    private static final String GOOGLE_MAPS_API_URL = "https://maps.googleapis.com/maps/api/distancematrix/";[m
+[31m-    private static final String OUTPUT_FORMAT = "json";[m
+[31m-    private static final String QUESTION_MARK = "?";[m
+[31m-    private static final String AMPERSAND = "&";[m
+[31m-    private static final String UNITS = "units=";[m
+[31m-    private static final String MODE = "mode=";[m
+[31m-    private static final String ORIGINS = "origins=";[m
+[31m-    private static final String DESTINATIONS = "destinations=";[m
+[31m-    private static final String how_call_it = "%2C";[m
+[31m-    private static final String bar = "|";[m
+[32m+[m
+     private static final String API_KEY = "AIzaSyCo9VFAnMjE99Jtyt4OH44zxLjjbKEUVcE";[m
+ [m
+     /**[m
+[36m@@ -43,29 +34,29 @@[m [mpublic class GoogleMapsRequestBuilder {[m
+      */[m
+     public static String websiteRequestBuilder(LatLng currentPosition, ArrayList<LatLng> destinations) {[m
+         StringBuilder stringBuilder = new StringBuilder()[m
+[31m-                .append(GOOGLE_MAPS_API_URL)[m
+[31m-                .append(OUTPUT_FORMAT)[m
+[31m-                .append(QUESTION_MARK)[m
+[31m-                .append(UNITS).append("metrics")[m
+[31m-                .append(AMPERSAND)[m
+[31m-                .append(MODE).append("walking")[m
+[31m-                .append(AMPERSAND)[m
+[31m-                .append(ORIGINS)[m
+[32m+[m[32m                .append("https://maps.googleapis.com/maps/api/distancematrix/")[m
+[32m+[m[32m                .append("json")[m
+[32m+[m[32m                .append("?")[m
+[32m+[m[32m                .append("units=metrics")[m
+[32m+[m[32m                .append("&")[m
+[32m+[m[32m                .append("mode=walking")[m
+[32m+[m[32m                .append("&")[m
+[32m+[m[32m                .append("origins=")[m
+                 .append(currentPosition.latitude)[m
+                 .append(",")[m
+                 .append(currentPosition.longitude)[m
+[31m-                .append(AMPERSAND)[m
+[31m-                .append(DESTINATIONS);[m
+[32m+[m[32m                .append("&")[m
+[32m+[m[32m                .append("destinations");[m
+ [m
+         for (LatLng latLng : destinations) {[m
+             stringBuilder.append(latLng.latitude)[m
+[31m-                    .append(how_call_it)[m
+[32m+[m[32m                    .append("%2C")[m
+                     .append(latLng.longitude)[m
+[31m-                    .append(bar);[m
+[32m+[m[32m                    .append("|");[m
+         }[m
+[31m-        stringBuilder.deleteCharAt(stringBuilder.length()-1); //delete last | and put & instead[m
+[31m-        stringBuilder.append(AMPERSAND);[m
+[31m-        stringBuilder.append("key=")[m
+[32m+[m[32m        stringBuilder.deleteCharAt(stringBuilder.length()-1); //delete last |[m
+[32m+[m[32m        stringBuilder.append("&")[m
+[32m+[m[32m                .append("key=")[m
+                 .append(API_KEY);[m
+ [m
+         return stringBuilder.toString();[m
+[1mdiff --git a/app/src/main/java/cosapp/com/nostra/JSON/JSONParser.java b/app/src/main/java/cosapp/com/nostra/JSON/JSONParser.java[m
+[1mindex 667743c..7067f76 100644[m
+[1m--- a/app/src/main/java/cosapp/com/nostra/JSON/JSONParser.java[m
+[1m+++ b/app/src/main/java/cosapp/com/nostra/JSON/JSONParser.java[m
+[36m@@ -66,6 +66,9 @@[m [mpublic class JSONParser {[m
+             String placeName = properties.getString("nazwa");[m
+             String description = properties.getString("opis");[m
+             description = removeHtmlTags(description);[m
+[32m+[m[32m            description = description.substring(0, 1).toUpperCase() + description.substring(1, description.length());[m
+[32m+[m[32m            description = description.replace("...", ".");[m
+[32m+[m
+             boolean paymentByCreditCard = properties.has("y_4346_karty_p_atnic");[m
+ [m
+             machines.add(new TicketMachine([m
+[1mdiff --git a/app/src/main/java/cosapp/com/nostra/JSON/JSONReaderTask.java b/app/src/main/java/cosapp/com/nostra/JSON/JSONReaderTask.java[m
+[1mindex 6f5a49b..272a0ec 100644[m
+[1m--- a/app/src/main/java/cosapp/com/nostra/JSON/JSONReaderTask.java[m
+[1m+++ b/app/src/main/java/cosapp/com/nostra/JSON/JSONReaderTask.java[m
+[36m@@ -23,7 +23,7 @@[m [mpublic class JSONReaderTask extends AsyncTask<Void, Void, String> {[m
+      * @param websiteURL URL of website with JSON code[m
+      */[m
+     public JSONReaderTask(String websiteURL) {[m
+[31m-    this.websiteURL = websiteURL;[m
+[32m+[m[32m        this.websiteURL = websiteURL;[m
+     }[m
+ [m
+     protected String doInBackground(Void... voids) {[m
+[1mdiff --git a/app/src/main/res/drawable/info_window_gradient.xml b/app/src/main/res/drawable/info_window_gradient.xml[m
+[1mindex a8b409b..566657d 100644[m
+[1m--- a/app/src/main/res/drawable/info_window_gradient.xml[m
+[1m+++ b/app/src/main/res/drawable/info_window_gradient.xml[m
+[36m@@ -1,4 +1,12 @@[m
+ <?xml version="1.0" encoding="utf-8"?>[m
+ <selector xmlns:android="http://schemas.android.com/apk/res/android">[m
+[31m-[m
+[32m+[m[32m    <item>[m
+[32m+[m[32m        <shape>[m
+[32m+[m[32m            <gradient[m
+[32m+[m[32m                android:angle="90"[m
+[32m+[m[32m                android:startColor="#ccc0c4cc"[m
+[32m+[m[32m                android:endColor="#fff0f5ff"[m
+[32m+[m[32m                android:type="linear" />[m
+[32m+[m[32m        </shape>[m
+[32m+[m[32m    </item>[m
+ </selector>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/src/main/res/layout/activity_maps.xml b/app/src/main/res/layout/activity_maps.xml[m
+[1mindex 9a0daec..7ddb3bc 100644[m
+[1m--- a/app/src/main/res/layout/activity_maps.xml[m
+[1m+++ b/app/src/main/res/layout/activity_maps.xml[m
+[36m@@ -4,5 +4,5 @@[m
+     android:id="@+id/map"[m
+     android:name="com.google.android.gms.maps.SupportMapFragment"[m
+     android:layout_width="match_parent"[m
+[31m-    android:layout_height="700px"[m
+[32m+[m[32m    android:layout_height="match_parent"[m
+     tools:context="cosapp.com.nostra.Activities.MapsActivity" />[m
+\ No newline at end of file[m
+[1mdiff --git a/app/src/main/res/layout/info_window_ticket_machines.xml b/app/src/main/res/layout/info_window_ticket_machines.xml[m
+[1mindex 3509b84..682cd85 100644[m
+[1m--- a/app/src/main/res/layout/info_window_ticket_machines.xml[m
+[1m+++ b/app/src/main/res/layout/info_window_ticket_machines.xml[m
+[36m@@ -1,6 +1,53 @@[m
+ <?xml version="1.0" encoding="utf-8"?>[m
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"[m
+[31m-    android:orientation="vertical" android:layout_width="match_parent"[m
+[31m-    android:layout_height="match_parent">[m
+[32m+[m[32m    xmlns:app="http://schemas.android.com/apk/res-auto"[m
+[32m+[m[32m    xmlns:tools="http://schemas.android.com/tools"[m
+[32m+[m[32m    android:orientation="vertical"[m
+[32m+[m[32m    android:layout_height="wrap_content"[m
+[32m+[m[32m    android:background="@drawable/info_window_gradient"[m
+[32m+[m[32m    android:layout_width="wrap_content">[m
+ [m
+[32m+[m[32m    <LinearLayout[m
+[32m+[m[32m        android:orientation="horizontal"[m
+[32m+[m[32m        android:layout_width="wrap_content"[m
+[32m+[m[32m        android:layout_height="wrap_content">[m
+[32m+[m
+[32m+[m[32m        <TextView[m
+[32m+[m[32m            android:text="TextView"[m
+[32m+[m[32m            android:layout_width="300dp"[m
+[32m+[m[32m            android:layout_height="wrap_content"[m
+[32m+[m[32m            android:id="@+id/place_textView"[m
+[32m+[m[32m            tools:text="nazwa przystanku"[m
+[32m+[m[32m            android:gravity="center"[m
+[32m+[m[32m            android:textStyle="normal|bold" />[m
+[32m+[m[32m    </LinearLayout>[m
+[32m+[m
+[32m+[m[32m    <LinearLayout[m
+[32m+[m[32m        android:orientation="horizontal"[m
+[32m+[m[32m        android:layout_width="wrap_content"[m
+[32m+[m[32m        android:layout_height="wrap_content">[m
+[32m+[m
+[32m+[m[32m        <TextView[m
+[32m+[m[32m            android:text="TextView"[m
+[32m+[m[32m            android:layout_width="wrap_content"[m
+[32m+[m[32m            android:layout_height="wrap_content"[m
+[32m+[m[32m            android:id="@+id/description_textView"[m
+[32m+[m[32m            tools:text="Krótki opis"[m
+[32m+[m[32m            android:gravity="center"[m
+[32m+[m[32m            android:maxWidth="300dp"[m
+[32m+[m[32m            android:singleLine="false" />[m
+[32m+[m[32m    </LinearLayout>[m
+[32m+[m
+[32m+[m[32m    <LinearLayout[m
+[32m+[m[32m        android:orientation="horizontal"[m
+[32m+[m[32m        android:layout_width="match_parent"[m
+[32m+[m[32m        android:layout_height="wrap_content">[m
+[32m+[m
+[32m+[m[32m        <ImageView[m
+[32m+[m[32m            android:layout_width="match_parent"[m
+[32m+[m[32m            android:layout_height="wrap_content"[m
+[32m+[m[32m            app:srcCompat="@android:drawable/radiobutton_on_background"[m
+[32m+[m[32m            android:id="@+id/credit_card_imageView"[m
+[32m+[m[32m            android:layout_gravity="center_horizontal" />[m
+[32m+[m[32m    </LinearLayout>[m
+ </LinearLayout>[m
+\ No newline at end of file[m

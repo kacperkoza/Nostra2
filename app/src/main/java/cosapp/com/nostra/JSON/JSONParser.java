@@ -66,6 +66,9 @@ public class JSONParser {
             String placeName = properties.getString("nazwa");
             String description = properties.getString("opis");
             description = removeHtmlTags(description);
+            description = description.substring(0, 1).toUpperCase() + description.substring(1, description.length());
+            description = description.replace("...", ".");
+
             boolean paymentByCreditCard = properties.has("y_4346_karty_p_atnic");
 
             machines.add(new TicketMachine(

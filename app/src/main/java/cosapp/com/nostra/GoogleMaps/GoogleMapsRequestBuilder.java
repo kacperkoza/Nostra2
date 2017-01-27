@@ -12,16 +12,7 @@ import java.util.ArrayList;
  * Class for creating requests for Google Maps API
  */
 public class GoogleMapsRequestBuilder {
-    private static final String GOOGLE_MAPS_API_URL = "https://maps.googleapis.com/maps/api/distancematrix/";
-    private static final String OUTPUT_FORMAT = "json";
-    private static final String QUESTION_MARK = "?";
-    private static final String AMPERSAND = "&";
-    private static final String UNITS = "units=";
-    private static final String MODE = "mode=";
-    private static final String ORIGINS = "origins=";
-    private static final String DESTINATIONS = "destinations=";
-    private static final String how_call_it = "%2C";
-    private static final String bar = "|";
+
     private static final String API_KEY = "AIzaSyCo9VFAnMjE99Jtyt4OH44zxLjjbKEUVcE";
 
     /**
@@ -43,29 +34,29 @@ public class GoogleMapsRequestBuilder {
      */
     public static String websiteRequestBuilder(LatLng currentPosition, ArrayList<LatLng> destinations) {
         StringBuilder stringBuilder = new StringBuilder()
-                .append(GOOGLE_MAPS_API_URL)
-                .append(OUTPUT_FORMAT)
-                .append(QUESTION_MARK)
-                .append(UNITS).append("metrics")
-                .append(AMPERSAND)
-                .append(MODE).append("walking")
-                .append(AMPERSAND)
-                .append(ORIGINS)
+                .append("https://maps.googleapis.com/maps/api/distancematrix/")
+                .append("json")
+                .append("?")
+                .append("units=metrics")
+                .append("&")
+                .append("mode=walking")
+                .append("&")
+                .append("origins=")
                 .append(currentPosition.latitude)
                 .append(",")
                 .append(currentPosition.longitude)
-                .append(AMPERSAND)
-                .append(DESTINATIONS);
+                .append("&")
+                .append("destinations");
 
         for (LatLng latLng : destinations) {
             stringBuilder.append(latLng.latitude)
-                    .append(how_call_it)
+                    .append("%2C")
                     .append(latLng.longitude)
-                    .append(bar);
+                    .append("|");
         }
-        stringBuilder.deleteCharAt(stringBuilder.length()-1); //delete last | and put & instead
-        stringBuilder.append(AMPERSAND);
-        stringBuilder.append("key=")
+        stringBuilder.deleteCharAt(stringBuilder.length()-1); //delete last |
+        stringBuilder.append("&")
+                .append("key=")
                 .append(API_KEY);
 
         return stringBuilder.toString();
