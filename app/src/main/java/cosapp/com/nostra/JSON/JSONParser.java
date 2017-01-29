@@ -11,8 +11,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import cosapp.com.nostra.GoogleMaps.GoogleMapsDistance;
+import cosapp.com.nostra.OpeningHoursReader;
 import cosapp.com.nostra.Place.ParkingMachine;
 import cosapp.com.nostra.Place.TicketMachine;
+import cosapp.com.nostra.Place.TicketPoint;
 
 /**
  * Created by kkoza on 19.11.2016.
@@ -26,7 +28,7 @@ import cosapp.com.nostra.Place.TicketMachine;
  *     <li><code>ArrayList</code> of TicketMachine</li>
  *     <li><code>ArrayList</code> of ParkingMachine</li>
  *     <li><code>ArrayList</code> of BikeStation</li>
- *     <li><code>ArrayList</code> of TicketsPoint </li>
+ *     <li><code>ArrayList</code> of TicketPoint </li>
  * </ul>
  *
  */
@@ -121,15 +123,44 @@ public class JSONParser {
         JSONArray elements = jsonObject.getJSONArray("features");
 
         for (int i = 0 ; i < elements.length() ; i++) {
-            ParkingMachine pm = new ParkingMachine();
             JSONObject object = elements.getJSONObject(i);
             JSONObject geometry = object.getJSONObject("geometry");
             JSONArray coordinates = geometry.getJSONArray("coordinates");
             JSONObject properties = object.getJSONObject("properties");
+
             LatLng coords = new LatLng(coordinates.getDouble(0), coordinates.getDouble(1));
             String zone = properties.getString("zone");
             String street = properties.getString("street");
             list.add(new ParkingMachine(coords, "", zone, street));
+        }
+        return list;
+    }
+
+    public static ArrayList<TicketPoint> parseTicketPoints(String input) throws JSONException {
+        ArrayList<TicketPoint> list = new ArrayList<>(300);
+        JSONObject jsonObject = new JSONObject(input);
+        JSONArray features = jsonObject.getJSONArray("features");
+
+        for (int i = 0 ; i< features.length() ; i++) {
+            TicketPoint ticketPoint = new TicketPoint();
+            JSONObject object = features.getJSONObject(i);
+            JSONObject geometry = object.getJSONObject("geometry");
+            JSONArray coordinates = geometry.getJSONArray("coordinates");
+            JSONObject properties = object.getJSONObject("properties");
+
+            LatLng coords = new LatLng(coordinates.getDouble(1), coordinates.getDouble(0));
+            String weekDayHours = properties.getString("y_4308_godziny_otwar");
+            String saturdayHours = properties.getString("y_4309_godziny_otwar");
+            String sundayHours = properties.getString("y_4310_godziny_otwar");
+            String placeName = properties.getString("nazwa");
+
+            ticketPoint.addOpeningHours(0, OpeningHoursReader.parse(weekDayHours));
+            ticketPoint.addOpeningHours(1, OpeningHoursReader.parse(saturdayHours));
+            ticketPoint.addOpeningHours(2, OpeningHoursReader.parse(sundayHours));
+            ticketPoint.setCoordinates(coords);
+            ticketPoint.setPlaceName(placeName);
+
+            list.add(ticketPoint);
         }
         return list;
     }
