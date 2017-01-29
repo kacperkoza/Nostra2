@@ -87,13 +87,16 @@ public class TicketMachinesFragment extends android.support.v4.app.Fragment impl
             LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
             view = layoutInflater.inflate(R.layout.info_window_ticket_machines, null);
             view.setBackgroundResource(R.drawable.info_window_gradient);
+
             TextView title = (TextView) view.findViewById(R.id.place_textView);
-            TextView description = (TextView) view.findViewById(R.id.description_textView);
-            ImageView creditCards = (ImageView) view.findViewById(R.id.credit_card_imageView);
             title.setText(marker.getTitle());
-            description.setText(marker.getSnippet());
             title.setTextColor(Color.BLACK);
+
+            TextView description = (TextView) view.findViewById(R.id.description_textView);
+            description.setText(marker.getSnippet());
             description.setTextColor(Color.BLACK);
+
+            ImageView creditCards = (ImageView) view.findViewById(R.id.credit_card_imageView);
 
             return view;
         }
