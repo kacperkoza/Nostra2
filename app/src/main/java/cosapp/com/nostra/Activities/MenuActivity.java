@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import cosapp.com.nostra.Fragments.TicketMachinesFragment;
 import cosapp.com.nostra.Fragments.ItemFragment;
 import cosapp.com.nostra.Fragments.ParkingMachinesFragment;
+import cosapp.com.nostra.Fragments.TicketPointsFragment;
 import cosapp.com.nostra.R;
 
 public class MenuActivity extends AppCompatActivity
@@ -40,10 +41,8 @@ public class MenuActivity extends AppCompatActivity
 
         nvDrawer = (NavigationView) findViewById(R.id.nav_view);
 
-
         // Setup drawer view
         setupDrawerContent(nvDrawer);
-
     }
 
     @Override
@@ -120,9 +119,9 @@ public class MenuActivity extends AppCompatActivity
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment = null;
-        Fragment fragmentList = null;
         Class fragmentClass;
-        switch(menuItem.getItemId()) {
+
+        switch (menuItem.getItemId()) {
             case R.id.nav_ticket_machines:
                 fragmentClass = TicketMachinesFragment.class;
                 Log.d("switch-case", "id=nav_settings");
@@ -132,6 +131,12 @@ public class MenuActivity extends AppCompatActivity
                 fragmentClass = ParkingMachinesFragment.class;
                 Log.d("Switch-case", "id=nav_parking-machines");
                 break;
+
+            case R.id.nav_ticket_points:
+                fragmentClass = TicketPointsFragment.class;
+                Log.d("Switch-case", "id=nav_ticket_points");
+                break;
+
             default:
                 fragmentClass = TicketMachinesFragment.class;
                 break;
@@ -139,18 +144,15 @@ public class MenuActivity extends AppCompatActivity
 
         try {
             fragment = (Fragment) fragmentClass.newInstance();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         ItemFragment itemFragment = new ItemFragment();
 
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.mapContent, fragment).commit();
-        //fragmentManager.beginTransaction().replace(R.id.listContent, itemFragment).commit();
-
-
 
         // Highlight the selected item has been done by NavigationView
         if (lastSelectedMenuItem != null) {
@@ -164,10 +166,5 @@ public class MenuActivity extends AppCompatActivity
 
         // Close the navigation drawer
         mDrawer.closeDrawers();
-
     }
-    private void loadFragment() {
-
-    }
-
 }
