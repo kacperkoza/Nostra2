@@ -9,6 +9,9 @@ public abstract class Place {
     private LatLng coordinates;
     private String placeName;
 
+    public Place() {
+    }
+
     public Place(LatLng coordinates, String placeName) {
         this.coordinates = coordinates;
         this.placeName = placeName;
