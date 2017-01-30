@@ -87,20 +87,25 @@ public class TicketPointsFragment extends Fragment implements OnMapReadyCallback
             mMap.addMarker(getMarkerWithProperColor(tp).position(coords).title(tp.getPlaceName()));
         }
 
-        mMap.moveCamera(newLatLngZoom(new LatLng(52.405794, 16.930569), 18.0f));
+        mMap.moveCamera(newLatLngZoom(new LatLng(52.405794, 16.930569), 12.0f));
     }
 
     /**
-     * Return green marker when the shop is currently open. Otherwise its red.
+     * <p>Return marker with green color if the shop is opened. Otherwise its red.</p>
+     * <p>When infomration about opening hours is not provided, then the color will be blue.</p>
      * @param tp
      * @return Returns the <code>MarkerOptions</code> with proper color.
      */
     public MarkerOptions getMarkerWithProperColor(TicketPoint tp) {
-
-        if (tp.isOpened()) {
-            return new MarkerOptions().icon((BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-        } else {
-            return new MarkerOptions().icon((BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+        try {
+            if (tp.isOpened()) {
+                return new MarkerOptions().icon((BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+            } else {
+                return new MarkerOptions().icon((BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            }
+        //if no information about opening hours is available, then set color to Blue
+        } catch (IllegalStateException ex) {
+            return new MarkerOptions().icon((BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
         }
     }
 }

@@ -22,23 +22,30 @@ public class TicketPoint extends Place {
         openingHours = new HashMap<>(3);
     }
 
-    public boolean isOpened() {
+    public boolean isOpened() throws IllegalStateException {
         //get key based on current day
         int key = getKey();
 
-        OpeningHours oh = openingHours.get(key);
+        OpeningHours openingHours = this.openingHours.get(key);
 
-        if (oh != null) {
-            if (oh.isOpenedAllDay()) {
+        if (openingHours != null) {
+            if (openingHours.isOpenedAllDay()) {
                 return true;
-            } else if (oh.isClosedAllDay()) {
+            } else if (openingHours.isClosedAllDay()) {
                 return false;
             }
         }
 
-        //implement currentTime between two LocalTime.
+        if (!isInformationAboutOpeningHoursAvailable(openingHours)) {
+            throw new IllegalStateException("Information not available");
+        }
 
-        return false;
+        if (isBetweenTwoLocalTimes(openingHours)) {
+            return true;
+        } else {
+            return false;
+        }
+        //implement currentTime between two LocalTime.
     }
 
     private int getKey() {
@@ -62,6 +69,41 @@ public class TicketPoint extends Place {
         }
         return key;
     }
+
+    private boolean isInformationAboutOpeningHoursAvailable(OpeningHours openingHours) {
+        if (openingHours.getOpenedAt() == null || openingHours.getOpenedAt() == null) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
+    private boolean isBetweenTwoLocalTimes(OpeningHours openingHours) {
+        Calendar currentTime = Calendar.getInstance();
+
+        //Start Time
+        Calendar openedAt = Calendar.getInstance();
+        openedAt.set(Calendar.HOUR_OF_DAY, openingHours.getOpenedAt().getHourOfDay());
+        openedAt.set(Calendar.MINUTE, openingHours.getOpenedAt().getMinuteOfHour());
+
+        //Stop Time
+        Calendar closedAt = Calendar.getInstance();
+        closedAt.set(Calendar.HOUR_OF_DAY, openingHours.getClosedAt().getHourOfDay());
+        closedAt.set(Calendar.MINUTE, openingHours.getClosedAt().getMinuteOfHour());
+
+        if (closedAt.before(openedAt)) {
+            if (currentTime.after(closedAt)) {
+                closedAt.add(Calendar.DATE, 1);
+            } else {
+                openedAt.add(Calendar.DATE, -1);
+            }
+        }
+        return currentTime.after(openedAt) && currentTime.before(closedAt);
+    }
+
+
+
 
     public void addOpeningHours(Integer key, OpeningHours oh) {
         openingHours.put(key, oh);
