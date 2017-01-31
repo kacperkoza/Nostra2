@@ -45,7 +45,6 @@ public class TicketPoint extends Place {
         } else {
             return false;
         }
-        //implement currentTime between two LocalTime.
     }
 
     private int getKey() {

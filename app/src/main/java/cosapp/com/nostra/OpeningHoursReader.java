@@ -16,10 +16,10 @@ public class OpeningHoursReader {
         if (input.equals("nieczynne")) {
             openingHours.setClosedAllDay(true);
             return openingHours;
-        } else if (input.equals("24h") || input.equals("24H")) {
+        } else if (input.toLowerCase().equals("24h")) {
             openingHours.setOpenedAllDay(true);
             return openingHours;
-        } else if (input.equals("")) {
+        } else if (input.isEmpty()) {
             return null;
         }
 
@@ -32,26 +32,27 @@ public class OpeningHoursReader {
         LocalTime openedAt = null;
 
         try {
-            openedAt = new LocalTime(simpleDateFormat.parse(parts[0]));
-        } catch (ParseException e) {
-            try {
+            if (parts[0].contains(":")) {
+                openedAt = new LocalTime(simpleDateFormat.parse(parts[0]));
+            } else {
                 openedAt = new LocalTime(simpleDateFormat2.parse(parts[0]));
-            } catch (ParseException e1) {
-                e1.printStackTrace();
             }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         LocalTime closedAt = null;
 
         try {
-            closedAt = new LocalTime(simpleDateFormat.parse(parts[1]));
-        } catch (ParseException e) {
-            try {
-                closedAt = new LocalTime(simpleDateFormat2.parse(parts[1]));
-            } catch (ParseException e1) {
-                e1.printStackTrace();
+            if (parts[1].contains(":")) {
+                openedAt = new LocalTime(simpleDateFormat.parse(parts[0]));
+            } else {
+                openedAt = new LocalTime(simpleDateFormat2.parse(parts[0]));
             }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+
         return new OpeningHours(openedAt, closedAt);
     }
 }
