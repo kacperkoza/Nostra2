@@ -45,9 +45,9 @@ public class OpeningHoursReader {
 
         try {
             if (parts[1].contains(":")) {
-                openedAt = new LocalTime(simpleDateFormat.parse(parts[0]));
+                closedAt = new LocalTime(simpleDateFormat.parse(parts[1]));
             } else {
-                openedAt = new LocalTime(simpleDateFormat2.parse(parts[0]));
+                closedAt = new LocalTime(simpleDateFormat2.parse(parts[1]));
             }
         } catch (ParseException e) {
             e.printStackTrace();
