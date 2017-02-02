@@ -13,9 +13,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import cosapp.com.nostra.Fragments.TicketMachinesFragment;
+import cosapp.com.nostra.Fragments.BikeStationFragment;
 import cosapp.com.nostra.Fragments.ItemFragment;
 import cosapp.com.nostra.Fragments.ParkingMachinesFragment;
+import cosapp.com.nostra.Fragments.TicketMachinesFragment;
 import cosapp.com.nostra.Fragments.TicketPointsFragment;
 import cosapp.com.nostra.R;
 
@@ -122,6 +123,11 @@ public class MenuActivity extends AppCompatActivity
         Class fragmentClass;
 
         switch (menuItem.getItemId()) {
+            case R.id.nav_bikes:
+                fragmentClass = BikeStationFragment.class;
+                Log.d("switch-case", "id=nav_bikes");
+                break;
+
             case R.id.nav_ticket_machines:
                 fragmentClass = TicketMachinesFragment.class;
                 Log.d("switch-case", "id=nav_settings");
