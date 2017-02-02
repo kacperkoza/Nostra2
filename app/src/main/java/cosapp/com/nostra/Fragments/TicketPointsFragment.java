@@ -63,6 +63,7 @@ public class TicketPointsFragment extends Fragment implements OnMapReadyCallback
 
         JSONReaderTask task = new JSONReaderTask(Websites.TICKETS_SALE_POINTS);
         task.execute();
+
         String response = null;
         try {
             response = task.get();
