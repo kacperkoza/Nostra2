@@ -30,6 +30,35 @@ public class OpeningHours {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if ( !(obj instanceof OpeningHours) ) {
+            return false;
+        }
+
+        if ( !(this.openedAt.equals( ((OpeningHours)obj).getOpenedAt())) ) {
+            return false;
+        }
+
+        if ( !(this.closedAt.equals( ((OpeningHours)obj).getClosedAt())) ) {
+            return false;
+        }
+
+        if (this.isClosedAllDay() != ((OpeningHours) obj).isClosedAllDay()) {
+            return false;
+        }
+
+        if (this.isOpenedAllDay() != ((OpeningHours) obj).isOpenedAllDay()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public boolean isOpenedAllDay() {
         return openedAllDay;
     }

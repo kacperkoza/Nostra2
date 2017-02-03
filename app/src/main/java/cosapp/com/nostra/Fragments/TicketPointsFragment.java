@@ -67,6 +67,7 @@ public class TicketPointsFragment extends Fragment implements OnMapReadyCallback
         String response = null;
         try {
             response = task.get();
+            Log.d("response", response);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
