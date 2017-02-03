@@ -46,7 +46,7 @@ public class GoogleMapsRequestBuilder {
                 .append(",")
                 .append(currentPosition.longitude)
                 .append("&")
-                .append("destinations");
+                .append("destinations=");
 
         for (LatLng latLng : destinations) {
             stringBuilder.append(latLng.latitude)
