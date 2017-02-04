@@ -57,7 +57,7 @@ public class BikeStationFragment extends android.support.v4.app.Fragment impleme
                     Log.d("lat, lng", "[" + gpsTracker.getLatitude() + ", " + gpsTracker.getLongitude() + "]");
                     LatLng latLng = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
                     mMap.addMarker(
-                            new MarkerOptions().position(latLng).title("Kacper <3 Maja")
+                            new MarkerOptions().position(latLng).title("Aktualna pozycja")
                     ).showInfoWindow();
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
