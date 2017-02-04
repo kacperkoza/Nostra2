@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 
 import cosapp.com.nostra.CityBikesProvider;
+import cosapp.com.nostra.GPSTracker;
 import cosapp.com.nostra.Place.BikeStation;
 import cosapp.com.nostra.R;
 import cosapp.com.nostra.Utils;
@@ -53,8 +54,8 @@ public class BikeStationFragment extends android.support.v4.app.Fragment impleme
             @Override
             public void onClick(View view) {
                 if (gpsTracker.canGetLocation()) {
-                    Log.d("lat, lng", "[" + gpsTracker.latitude + ", " + gpsTracker.longitude + "]");
-                    LatLng latLng = new LatLng(gpsTracker.longitude, gpsTracker.latitude);
+                    Log.d("lat, lng", "[" + gpsTracker.getLatitude() + ", " + gpsTracker.getLongitude() + "]");
+                    LatLng latLng = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
                     mMap.addMarker(
                             new MarkerOptions().position(latLng).title("Kacper <3 Maja")
                     ).showInfoWindow();
