@@ -2,6 +2,7 @@ package cosapp.com.nostra.Fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -29,15 +31,41 @@ import cosapp.com.nostra.XMLParser;
 
 public class BikeStationFragment extends android.support.v4.app.Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
+    private FloatingActionButton fab;
+
+
+    private GPSTracker gpsTracker;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.activity_maps, null, false);
+        View view = inflater.inflate(R.layout.activity_maps, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
+
+        gpsTracker = new GPSTracker(getContext());
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (gpsTracker.canGetLocation()) {
+                    Log.d("lat, lng", "[" + gpsTracker.latitude + ", " + gpsTracker.longitude + "]");
+                    LatLng latLng = new LatLng(gpsTracker.longitude, gpsTracker.latitude);
+                    mMap.addMarker(
+                            new MarkerOptions().position(latLng).title("Kacper <3 Maja")
+                    ).showInfoWindow();
+
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                } else {
+                    gpsTracker.showSettingsAlert();
+                }
+
+            }
+        });
 
         return view;
     }
@@ -45,12 +73,13 @@ public class BikeStationFragment extends android.support.v4.app.Fragment impleme
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
 
         XMLParser xmlParser = new XMLParser(Websites.BIKE_STATIONS);
 
@@ -61,10 +90,11 @@ public class BikeStationFragment extends android.support.v4.app.Fragment impleme
         Log.i("city bikes provider", cityBikesProvider.toString());
 
         ArrayList<BikeStation> list = xmlParser.parseNextBike();
+
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(list.get(0).getCoordinates(), 16.0f));
         for (BikeStation bs : list) {
             mMap.addMarker(new MarkerOptions().position(bs.getCoordinates()).title(bs.getPlaceName()));
-
         }
     }
+
 }
