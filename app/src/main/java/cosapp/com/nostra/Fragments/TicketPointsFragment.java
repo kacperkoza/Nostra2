@@ -3,7 +3,6 @@ package cosapp.com.nostra.Fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +14,12 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONException;
-
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import cosapp.com.nostra.DataManager;
-import cosapp.com.nostra.JSON.JSONParser;
-import cosapp.com.nostra.JSON.JSONReaderTask;
 import cosapp.com.nostra.Place.TicketPoint;
 import cosapp.com.nostra.R;
-import cosapp.com.nostra.Websites;
 
 import static com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom;
 
@@ -61,32 +55,36 @@ public class TicketPointsFragment extends Fragment implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        JSONReaderTask task = new JSONReaderTask(Websites.TICKETS_SALE_POINTS);
-        task.execute();
-
-        String response = null;
-        try {
-            response = task.get();
-            Log.d("response", response);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
+//        JSONReaderTask task = new JSONReaderTask(Websites.TICKETS_SALE_POINTS);
+//        task.execute();
+//
+//        String response = null;
+//        try {
+//            response = task.get();
+//            Log.d("response", response);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
+//
         ArrayList<TicketPoint> list = new ArrayList<>(300);
-        if (response != null) {
-            try {
-                list = JSONParser.parseTicketPoints(response);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.d("JSON Exception", e.toString());
-            }
+//        if (response != null) {
+//            try {
+//                list = JSONParser.parseTicketPoints(response);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//                Log.d("JSON Exception", e.toString());
+//            }
+//        }
+        try {
+            list = mDataManager.getTicketPoints();
+        } catch(ParseException e) {
+            e.printStackTrace();
         }
-
-        for (TicketPoint tp : list) {
-            LatLng coords = tp.getCoordinates();
-            mMap.addMarker(getMarkerWithProperColor(tp).position(coords).title(tp.getPlaceName()));
+        for (int i = 0 ; i < list.size(); i++) {
+            LatLng coords = list.get(i).getCoordinates();
+            mMap.addMarker(getMarkerWithProperColor(list.get(i)).position(coords).title(list.get(i).getPlaceName()));
         }
 
         mMap.moveCamera(newLatLngZoom(new LatLng(52.405794, 16.930569), 12.0f));
