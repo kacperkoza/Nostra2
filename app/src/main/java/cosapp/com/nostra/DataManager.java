@@ -105,12 +105,10 @@ public class DataManager extends SQLiteOpenHelper {
     }
 
     private void addOpeningHoursToDatabase(long id, HashMap hashMap) {
-        SQLiteDatabase db = getReadableDatabase();
-
-        ContentValues contentValues = new ContentValues();
+        SQLiteDatabase db = getWritableDatabase();
 
         for (int i = 0; i < 3; i++) {
-            contentValues.clear();
+            ContentValues contentValues = new ContentValues();
             contentValues.put("id", id);
             contentValues.put("key", i);
 
@@ -148,15 +146,16 @@ public class DataManager extends SQLiteOpenHelper {
     //TODO IMPLEMENT SELECT * FROM TABLE WHERE KEY=TicketPlace.getKey() TO GET ONLY 1 OPENING HOURS
     //TODO IT WILL AVOID READING TWO UNNECESSARY HOURS
     public ArrayList<TicketPoint> getTicketPoints() throws ParseException {
+        SQLiteDatabase db = getReadableDatabase();
         ArrayList<TicketPoint> list = new ArrayList<>(320);
+
         Cursor cursor = makeQuery("ticketPoints","id", "x", "y", "placeName");
-        int i = 0;
+
         while (cursor.moveToNext()) {
-            SQLiteDatabase db = getReadableDatabase();
+
             String[] columns = {"key", "openAt", "closeAt", "isOpened24h", "isClosed24h"};
             String[] s = {cursor.getString(0)};
             Cursor c = db.query("ticketPointsHours", columns, "id= ?", s,null, null, null, null);
-           // Cursor c = db.rawQuery("ticketPointsHours", columns, "WHERE id=" + cursor.getInt(i),null, null, null, null);
             HashMap<Integer, OpeningHours> map = new HashMap<>(3);
             OpeningHours oh;
             TicketPoint tp = new TicketPoint();
@@ -192,7 +191,7 @@ public class DataManager extends SQLiteOpenHelper {
             tp.setCoordinates(coords);
             tp.setPlaceName(cursor.getString(3));
             list.add(tp);
-            i++;
+            
         }
         return list;
     }
