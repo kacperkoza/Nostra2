@@ -60,7 +60,7 @@ public class TicketMachinesFragment extends android.support.v4.app.Fragment impl
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        machines = mDataManager.getCoordsAndPlaceNames();
+        machines = mDataManager.getTicketMachines();
 
 
         mMap.setInfoWindowAdapter(new TicketMachinesInfoWindow());

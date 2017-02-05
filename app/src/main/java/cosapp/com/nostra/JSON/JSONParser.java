@@ -1,7 +1,5 @@
 package cosapp.com.nostra.JSON;
 
-import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -44,16 +42,16 @@ public class JSONParser {
      * <li>availbility of payment by credit cards</li>
      * </ul>
      *
-     * @param response Text with JSON objects of ticket machines
+     * @param input Text with JSON
      * @return ArrayList of the Ticket machines
      * @throws JSONException
      * @see TicketMachine
      */
-    public static ArrayList<TicketMachine> getTicketMachines(String response) throws JSONException {
-        ArrayList<TicketMachine> machines = new ArrayList<>(70);
+    public static ArrayList<TicketMachine> parseTicketMachines(String input) throws JSONException {
+        ArrayList<TicketMachine> list = new ArrayList<>(70);
 
-        JSONObject input = new JSONObject(response);
-        JSONArray features = input.getJSONArray("features");
+        JSONObject jsonObject = new JSONObject(input);
+        JSONArray features = jsonObject.getJSONArray("features");
 
         for (int i = 0; i < features.length(); i++) {
             JSONObject object = features.getJSONObject(i);
@@ -61,27 +59,26 @@ public class JSONParser {
             JSONArray coordinates = geometry.getJSONArray("coordinates");
             JSONObject properties = object.getJSONObject("properties");
 
-            int id = object.getInt("id");
-            LatLng mCoordinates = new LatLng(
-                    (Double) coordinates.get(0),
-                    (Double) coordinates.get(1));
+            LatLng coords = new LatLng((Double) coordinates.get(0), (Double) coordinates.get(1));
             String placeName = properties.getString("nazwa");
-            String description = properties.getString("opis");
-            description = removeHtmlTags(description);
+            boolean paymentByCreditCard = properties.has("y_4346_karty_p_atnic");
+            String description = cleanDescription(properties.getString("opis"));
             description = description.substring(0, 1).toUpperCase() + description.substring(1, description.length());
             description = description.replace("...", ".");
 
-            boolean paymentByCreditCard = properties.has("y_4346_karty_p_atnic");
-
-            machines.add(new TicketMachine(
-                    mCoordinates, placeName, description, paymentByCreditCard, id));
+            list.add(new TicketMachine(coords, placeName, description, paymentByCreditCard));
         }
-
-        return machines;
+        return list;
     }
 
-    private static String removeHtmlTags(String stringWithTags) {
-        return stringWithTags.replaceAll("\\<[^>]*>", "");
+    /**
+     * Deletes HTML tags, multiple occurences of dots, etc.
+     */
+    private static String cleanDescription(String input) {
+        String description = input.replaceAll("\\<[^>]*>", "");
+        description = description.substring(0, 1).toUpperCase() + description.substring(1, description.length());
+        description = description.replace("...", ".");
+        return description;
     }
 
     /**
@@ -96,7 +93,6 @@ public class JSONParser {
      */
     public static ArrayList<GoogleMapsDistance> parseGoogleMapsResponse(String response) throws JSONException {
         ArrayList<GoogleMapsDistance> list = new ArrayList<>(100);
-        Log.d("RESPONSE PARSER", response);
 
         JSONObject jsonObject = new JSONObject(response);
         JSONArray destinationAddresses = jsonObject.getJSONArray("destination_addresses");
@@ -116,8 +112,8 @@ public class JSONParser {
         return list;
     }
 
-    public static ArrayList<ParkingMachine> parseTicketMachines(String input) throws JSONException {
-        ArrayList<ParkingMachine> list = new ArrayList<>(70);
+    public static ArrayList<ParkingMachine> parseParkingMachines(String input) throws JSONException {
+        ArrayList<ParkingMachine> list = new ArrayList<>(420);
 
         JSONObject jsonObject = new JSONObject(input);
         JSONArray elements = jsonObject.getJSONArray("features");
@@ -131,13 +127,15 @@ public class JSONParser {
             LatLng coords = new LatLng(coordinates.getDouble(0), coordinates.getDouble(1));
             String zone = properties.getString("zone");
             String street = properties.getString("street");
+
             list.add(new ParkingMachine(coords, "", zone, street));
         }
         return list;
     }
 
     public static ArrayList<TicketPoint> parseTicketPoints(String input) throws JSONException {
-        ArrayList<TicketPoint> list = new ArrayList<>(300);
+        ArrayList<TicketPoint> list = new ArrayList<>(260);
+
         JSONObject jsonObject = new JSONObject(input);
         JSONArray features = jsonObject.getJSONArray("features");
 
@@ -164,7 +162,6 @@ public class JSONParser {
         }
         return list;
     }
-
 }
 
 

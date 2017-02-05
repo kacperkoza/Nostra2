@@ -14,7 +14,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 
 import cosapp.com.nostra.DataManager;
@@ -55,34 +54,9 @@ public class TicketPointsFragment extends Fragment implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-//        JSONReaderTask task = new JSONReaderTask(Websites.TICKETS_SALE_POINTS);
-//        task.execute();
-//
-//        String response = null;
-//        try {
-//            response = task.get();
-//            Log.d("response", response);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        }
-//
-        ArrayList<TicketPoint> list = new ArrayList<>(300);
-//        if (response != null) {
-//            try {
-//                list = JSONParser.parseTicketPoints(response);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//                Log.d("JSON Exception", e.toString());
-//            }
-//        }
+        ArrayList<TicketPoint> list;
+        list = mDataManager.getTicketPoints();
 
-        try {
-            list = mDataManager.getTicketPoints();
-        } catch(ParseException e) {
-            e.printStackTrace();
-        }
         for (int i = 0 ; i < list.size(); i++) {
             LatLng coords = list.get(i).getCoordinates();
             mMap.addMarker(getMarkerWithProperColor(list.get(i)).position(coords).title(list.get(i).getPlaceName()));
@@ -94,7 +68,6 @@ public class TicketPointsFragment extends Fragment implements OnMapReadyCallback
     /**
      * <p>Return marker with green color if the shop is opened. Otherwise its red.</p>
      * <p>When infomration about opening hours is not provided, then the color will be blue.</p>
-     * @param tp
      * @return Returns the <code>MarkerOptions</code> with proper color.
      */
     public MarkerOptions getMarkerWithProperColor(TicketPoint tp) {

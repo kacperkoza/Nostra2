@@ -102,7 +102,7 @@ public class SplashScreen extends Activity {
 
             if (result != null) {
                 try {
-                    ticketMachines = JSONParser.getTicketMachines(result);
+                    ticketMachines = JSONParser.parseTicketMachines(result);
                 } catch (JSONException e) {
                     Log.e("loadData", "JSONException");
                 }
@@ -132,7 +132,7 @@ public class SplashScreen extends Activity {
 
         if (result != null) {
             try {
-                parkingMachines = JSONParser.parseTicketMachines(result);
+                parkingMachines = JSONParser.parseParkingMachines(result);
             } catch (JSONException e) {
                 Log.e("loadData", "JSONException");
             }

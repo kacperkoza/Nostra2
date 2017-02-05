@@ -50,7 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        ArrayList<TicketMachine> machines = mDataManager.getCoordsAndPlaceNames();
+        ArrayList<TicketMachine> machines = mDataManager.getTicketMachines();
 
         /*for (int i = 0 ; i < machines.size() ; i++) {
             LatLng latLng = machines.get(i).getCoordinates();

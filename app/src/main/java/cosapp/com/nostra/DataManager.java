@@ -76,11 +76,10 @@ public class DataManager extends SQLiteOpenHelper {
     }
 
     /**
-     * Adds <code>TicketMachine</code> object to the table parkingMachines
-     * @param ticketMachine
+     * Adds <code>TicketMachine</code> object to the table parkingMachines.
+     * @param ticketMachine to add
      */
     public void addTicketMachineToDatabase(TicketMachine ticketMachine) {
-        SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("creditCard", (ticketMachine.isPaymentByCreditCardAvailable() ? 1 : 0));
         contentValues.put("id", ticketMachine.getID());
@@ -88,20 +87,37 @@ public class DataManager extends SQLiteOpenHelper {
         contentValues.put("y", ticketMachine.getCoordinates().latitude);
         contentValues.put("placeName", ticketMachine.getPlaceName());
         contentValues.put("description", ticketMachine.getDescription());
+
+        SQLiteDatabase db = getWritableDatabase();
         db.insertOrThrow("ticketMachines", null, contentValues);
+        db.close();
     }
 
-    public void addTicketPointToDatabase(TicketPoint ticketPoint) {
-        SQLiteDatabase db = getWritableDatabase();
+    /**
+     * Adds Ticket Point object to the table ticketPoints
+     * @param ticketPoint to add.
+     */
 
+    public void addTicketPointToDatabase(TicketPoint ticketPoint) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("x", ticketPoint.getCoordinates().longitude);
         contentValues.put("y", ticketPoint.getCoordinates().latitude);
         contentValues.put("placeName",  ticketPoint.getPlaceName());
+
+        SQLiteDatabase db = getWritableDatabase();
         long id = db.insertOrThrow("ticketPoints", null, contentValues);
+        db.close();
 
         addOpeningHoursToDatabase(id, ticketPoint.getOpeningHours());
     }
+
+    /**
+     * Add <code>OpeningHours</code> to the table ticketPointsHours
+     *
+     * @param id to create relation between Ticket Point and OpeningHours. ID is foreign key
+     *           for table OpeningHours. Every TicketPoint record has 3 different opening hours.
+     * @param hashMap with object <code>OpeningHours</code>
+     */
 
     private void addOpeningHoursToDatabase(long id, HashMap hashMap) {
         for (int i = 0; i < 3; i++) {
@@ -132,16 +148,21 @@ public class DataManager extends SQLiteOpenHelper {
     }
 
     /**
-     * Convert LocalTime to hh:mm (required for SQLite Datatype)
-     * @param localTime
-     * @return
+     * Converts LocalTime to HH:mm (required for SQLite Date datatype)
+     * @see <a href>http://www.sqlite.org/lang_datefunc.html</a>
+     * @param localTime to be converted
+     * @return String with proper format to save in database.
      */
     private String localTimeToString(LocalTime localTime) {
         return localTime.getHourOfDay() + ":" + localTime.getMinuteOfHour();
     }
 
-
-    public ArrayList<TicketPoint> getTicketPoints() throws ParseException {
+    /**
+     * <p>Getting <code>ArrayList</code> which containt all <code>TicketPoint</code> objects</p>
+     *
+     * @return <code>ArrayListe</code> with Ticket Points
+     */
+    public ArrayList<TicketPoint> getTicketPoints() {
         ArrayList<TicketPoint> list = new ArrayList<>(320);
 
         Cursor cursor = makeQuery("ticketPoints","id", "x", "y", "placeName");
@@ -158,6 +179,17 @@ public class DataManager extends SQLiteOpenHelper {
         return list;
     }
 
+    /**
+     * Reads Opening hours from database based on a current day.
+     * <code>TicketPoint.getKey()</code> returns <code>int</code> based on a day:
+     * <ul>
+     * <li>0 - weekdays</li>
+     * <li>1 - saturdays</li>
+     * <li>2 - sundays or holidays</li></lie>
+     * </ul>
+     * @param id to get opening hours which are related to a ticket point.
+     * @return Opening hours based on a current day.
+     */
     private OpeningHours readOpeningHours(long id) {
         SQLiteDatabase db = getReadableDatabase();
 
@@ -185,6 +217,14 @@ public class DataManager extends SQLiteOpenHelper {
         return null;
     }
 
+    /**
+     * Parser for Date in SQLite datatype.
+     * Format: HH:MM
+     * @param openAt String with opening hours
+     * @param closeAt String with closing hours
+     * @return Opening with parsed dates.
+     */
+
     private OpeningHours readOpenAndCloseTime(String openAt, String closeAt) {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
@@ -200,19 +240,26 @@ public class DataManager extends SQLiteOpenHelper {
         return new OpeningHours(LocalTime.fromDateFields(open), LocalTime.fromDateFields(close));
     }
 
+    /**
+     * Adds <code>Parking Machine</code> object to the database.
+     * @param parkingMachine to add.
+     */
+
     public void addParkingMachineToTheDatabase(ParkingMachine parkingMachine) {
-        SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("x", parkingMachine.getCoordinates().longitude);
         contentValues.put("y", parkingMachine.getCoordinates().latitude);
         contentValues.put("street", parkingMachine.getStreet());
         contentValues.put("zone", parkingMachine.getZone());
+
+        SQLiteDatabase db = getWritableDatabase();
         db.insertOrThrow("parkingMachines", null, contentValues);
+        db.close();
     }
 
     /**
-     * Function that reads all coords and place names of ticket machines from database
-     * @return <code>ArrayList</code> of all ticket machines
+     * Reads all <code>ParkingMachine</code> objects from database.
+     * @return <code>ArrayList</code> with all objects.
      */
 
     public ArrayList<ParkingMachine> getParkingMachines() {
@@ -230,7 +277,12 @@ public class DataManager extends SQLiteOpenHelper {
         return list;
     }
 
-    public ArrayList<TicketMachine> getCoordsAndPlaceNames(){
+    /**
+     * Reads all <code>TicketMachine</code> objets from database.
+     * @return
+     */
+
+    public ArrayList<TicketMachine> getTicketMachines(){
         ArrayList<TicketMachine> list = new ArrayList<>(60);
         Cursor cursor = makeQuery("ticketMachines", "x", "y", "placeName", "description");
 
@@ -249,6 +301,7 @@ public class DataManager extends SQLiteOpenHelper {
      * Fucntion for getting coords of all ticket machines for Google Maps API request.
      * @return <code>ArrayList</code> of all ticket machines coords.
      */
+    @Deprecated
     public ArrayList<LatLng> getCoords(){
         ArrayList<LatLng> list = new ArrayList<>(60);
         Cursor cursor = makeQuery("parkingMachines", "x", "y");
@@ -262,9 +315,17 @@ public class DataManager extends SQLiteOpenHelper {
     }
 
     /**
-     * Making query to the ticketMachines.db with desired columns.
-     * @param columns varang argument of desired columns, e.g. "x", "placeName" etc.
-     * @return Cursor
+     * Making query to the proper table.
+     * Available tables:
+     * <ul>
+     * <li>parkingMachines</li>
+     * <li>ticketMachines</li>
+     * <li>ticketPoints</li>
+     * <li>ticketPointsHours</li>
+     * </ul>
+     *
+     * @param tableName one of the above table's name
+     * @param columns desired columns
      */
     private Cursor makeQuery(String tableName, String... columns) {
         SQLiteDatabase db = getReadableDatabase();
