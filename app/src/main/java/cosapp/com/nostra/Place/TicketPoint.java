@@ -36,7 +36,7 @@ public class TicketPoint extends Place {
             }
         }
 
-        if (!isInformationAboutOpeningHoursAvailable(openingHours)) {
+        if (openingHours == null) {
             throw new IllegalStateException("Information not available");
         }
 
@@ -113,5 +113,9 @@ public class TicketPoint extends Place {
         return super.toString() + "TicketPoint{" +
                 "openingHours=" + openingHours +
                 '}';
+    }
+
+    public HashMap<Integer, OpeningHours> getOpeningHours() {
+        return openingHours;
     }
 }
