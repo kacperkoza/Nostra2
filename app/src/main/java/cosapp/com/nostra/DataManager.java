@@ -101,26 +101,36 @@ public class DataManager extends SQLiteOpenHelper {
         contentValues.put("placeName",  ticketPoint.getPlaceName());
         long id = db.insertOrThrow("ticketPoints", null, contentValues);
 
-        ContentValues cValues = new ContentValues();
+        addOpeningHoursToDatabase(id, ticketPoint.getOpeningHours());
+    }
+
+    private void addOpeningHoursToDatabase(long id, HashMap hashMap) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+
         for (int i = 0; i < 3; i++) {
-            HashMap hashmap = ticketPoint.getOpeningHours();
-            cValues.put("id", id);
-            cValues.put("key", i);
-            OpeningHours openingHours = (OpeningHours) hashmap.get(i);
-            if (openingHours != null && openingHours.getClosedAt() != null && openingHours.getOpenedAt() != null) {
-                cValues.put("openAt", localTimeToString(openingHours.getOpenedAt()));
-                cValues.put("closeAt", localTimeToString(openingHours.getClosedAt()));
-            } else if (openingHours != null){
+            contentValues.clear();
+            contentValues.put("id", id);
+            contentValues.put("key", i);
+
+            OpeningHours openingHours = (OpeningHours) hashMap.get(i);
+
+            if (openingHours != null) {
                 int valueToPut = openingHours.isOpenedAllDay() ? 1 : 0;
+                contentValues.put("isOpened24h", valueToPut);
+
                 int valueToPut2 = openingHours.isClosedAllDay() ? 1 : 0;
-                if (valueToPut == 1 || valueToPut2 == 1) {
-                    cValues.remove("openAt");
-                    cValues.remove("closeAt");
+                contentValues.put("isClosed24h", valueToPut2);
+
+                if (openingHours.getClosedAt() != null && openingHours.getOpenedAt() != null) {
+                    if (valueToPut == 0 && valueToPut2 == 0) {
+                        contentValues.put("openAt", localTimeToString(openingHours.getOpenedAt()));
+                        contentValues.put("closeAt", localTimeToString(openingHours.getClosedAt()));
+                    }
                 }
-                cValues.put("isOpened24h", valueToPut);
-                cValues.put("isClosed24h", valueToPut2);
             }
-            db.insertOrThrow("ticketPointsHours", null, cValues);
+            db.insertOrThrow("ticketPointsHours", null, contentValues);
         }
     }
 
