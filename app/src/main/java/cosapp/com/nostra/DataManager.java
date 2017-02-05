@@ -91,7 +91,6 @@ public class DataManager extends SQLiteOpenHelper {
         db.insertOrThrow("ticketMachines", null, contentValues);
     }
 
-    //TODO REFACTOR PLX
     public void addTicketPointToDatabase(TicketPoint ticketPoint) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -105,8 +104,6 @@ public class DataManager extends SQLiteOpenHelper {
     }
 
     private void addOpeningHoursToDatabase(long id, HashMap hashMap) {
-        SQLiteDatabase db = getWritableDatabase();
-
         for (int i = 0; i < 3; i++) {
             ContentValues contentValues = new ContentValues();
             contentValues.put("id", id);
@@ -128,7 +125,9 @@ public class DataManager extends SQLiteOpenHelper {
                     }
                 }
             }
+            SQLiteDatabase db = getWritableDatabase();
             db.insertOrThrow("ticketPointsHours", null, contentValues);
+            db.close();
         }
     }
 
@@ -142,58 +141,63 @@ public class DataManager extends SQLiteOpenHelper {
     }
 
 
-    //TODO REFACTOR PLX
-    //TODO IMPLEMENT SELECT * FROM TABLE WHERE KEY=TicketPlace.getKey() TO GET ONLY 1 OPENING HOURS
-    //TODO IT WILL AVOID READING TWO UNNECESSARY HOURS
     public ArrayList<TicketPoint> getTicketPoints() throws ParseException {
-        SQLiteDatabase db = getReadableDatabase();
         ArrayList<TicketPoint> list = new ArrayList<>(320);
 
         Cursor cursor = makeQuery("ticketPoints","id", "x", "y", "placeName");
 
         while (cursor.moveToNext()) {
-
-            String[] columns = {"key", "openAt", "closeAt", "isOpened24h", "isClosed24h"};
-            String[] s = {cursor.getString(0)};
-            Cursor c = db.query("ticketPointsHours", columns, "id= ?", s,null, null, null, null);
-            HashMap<Integer, OpeningHours> map = new HashMap<>(3);
-            OpeningHours oh;
             TicketPoint tp = new TicketPoint();
-            int j = 0;
-            while (c.moveToNext()) {
-                boolean isOpened24h = false;
-                boolean isClosed24h = false;
-                if (c.getString(3) != null && c.getString(4) != null) {
-                    isOpened24h =  c.getString(3).equals("1") ? true : false;
-                    isClosed24h = c.getString(4).equals("1") ? true : false;
-                }
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                Date open = null;
-                Date close = null;
 
-                if (c.getString(1) != null && c.getString(2) != null) {
-                    open = sdf.parse(c.getString(1));
-                    close = sdf.parse(c.getString(2));
-                    oh = new OpeningHours(LocalTime.fromDateFields(open), LocalTime.fromDateFields(close));
-                } else if (isClosed24h == true || isOpened24h == true) {
-                    oh = new OpeningHours();
-                    oh.setOpenedAllDay(isOpened24h);
-                    oh.setClosedAllDay(isClosed24h);
-                } else {
-                    oh = null;
-                }
-
-
-                tp.addOpeningHours(j, oh);
-                j++;
-            }
             LatLng coords = new LatLng(cursor.getDouble(2), cursor.getDouble(1));
             tp.setCoordinates(coords);
             tp.setPlaceName(cursor.getString(3));
+            tp.addOpeningHours(TicketPoint.getKey(), readOpeningHours(cursor.getLong(0)));
             list.add(tp);
-            
         }
         return list;
+    }
+
+    private OpeningHours readOpeningHours(long id) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        int key = TicketPoint.getKey();
+        String[] columns = {"openAt", "closeAt", "isOpened24h", "isClosed24h"};
+        String[] selectionArgs = {String.valueOf(id), String.valueOf(key)};
+        Cursor c = db.query("ticketPointsHours", columns, "id= ? AND key = ?", selectionArgs,
+                null, null, null, null);
+
+        while (c.moveToNext()) {
+            OpeningHours oh = new OpeningHours();
+
+            if (c.isNull(0) && c.isNull(1) && c.isNull(2) && c.isNull(3)) {
+                return null;
+            }
+
+            if (c.isNull(0) && c.isNull(1)) {
+                oh.setOpenedAllDay(c.getString(2).equals("1"));
+                oh.setClosedAllDay(c.getString(3).equals("1"));
+                return oh;
+            } else {
+                return readOpenAndCloseTime(c.getString(0), c.getString(1));
+            }
+        }
+        return null;
+    }
+
+    private OpeningHours readOpenAndCloseTime(String openAt, String closeAt) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+
+        Date open = null;
+        Date close = null;
+
+        try {
+            open = sdf.parse(openAt);
+            close = sdf.parse(closeAt);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new OpeningHours(LocalTime.fromDateFields(open), LocalTime.fromDateFields(close));
     }
 
     public void addParkingMachineToTheDatabase(ParkingMachine parkingMachine) {
