@@ -77,6 +77,7 @@ public class TicketPointsFragment extends Fragment implements OnMapReadyCallback
 //                Log.d("JSON Exception", e.toString());
 //            }
 //        }
+
         try {
             list = mDataManager.getTicketPoints();
         } catch(ParseException e) {

@@ -91,6 +91,7 @@ public class DataManager extends SQLiteOpenHelper {
         db.insertOrThrow("ticketMachines", null, contentValues);
     }
 
+    //TODO REFACTOR PLX
     public void addTicketPointToDatabase(TicketPoint ticketPoint) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -109,12 +110,15 @@ public class DataManager extends SQLiteOpenHelper {
             if (openingHours != null && openingHours.getClosedAt() != null && openingHours.getOpenedAt() != null) {
                 cValues.put("openAt", localTimeToString(openingHours.getOpenedAt()));
                 cValues.put("closeAt", localTimeToString(openingHours.getClosedAt()));
-            }
-            if (openingHours != null) {
+            } else if (openingHours != null){
                 int valueToPut = openingHours.isOpenedAllDay() ? 1 : 0;
+                int valueToPut2 = openingHours.isClosedAllDay() ? 1 : 0;
+                if (valueToPut == 1 || valueToPut2 == 1) {
+                    cValues.remove("openAt");
+                    cValues.remove("closeAt");
+                }
                 cValues.put("isOpened24h", valueToPut);
-                valueToPut = openingHours.isClosedAllDay() ? 1 : 0;
-                cValues.put("isClosed24h", valueToPut);
+                cValues.put("isClosed24h", valueToPut2);
             }
             db.insertOrThrow("ticketPointsHours", null, cValues);
         }
@@ -129,6 +133,10 @@ public class DataManager extends SQLiteOpenHelper {
         return localTime.getHourOfDay() + ":" + localTime.getMinuteOfHour();
     }
 
+
+    //TODO REFACTOR PLX
+    //TODO IMPLEMENT SELECT * FROM TABLE WHERE KEY=TicketPlace.getKey() TO GET ONLY 1 OPENING HOURS
+    //TODO IT WILL AVOID READING TWO UNNECESSARY HOURS
     public ArrayList<TicketPoint> getTicketPoints() throws ParseException {
         ArrayList<TicketPoint> list = new ArrayList<>(320);
         Cursor cursor = makeQuery("ticketPoints","id", "x", "y", "placeName");
@@ -144,8 +152,12 @@ public class DataManager extends SQLiteOpenHelper {
             TicketPoint tp = new TicketPoint();
             int j = 0;
             while (c.moveToNext()) {
-                boolean isOpened24h = c.getString(3).equals("1") ? true : false;
-                boolean isClosed24h = c.getString(4).equals("1") ? true : false;
+                boolean isOpened24h = false;
+                boolean isClosed24h = false;
+                if (c.getString(3) != null && c.getString(4) != null) {
+                    isOpened24h =  c.getString(3).equals("1") ? true : false;
+                    isClosed24h = c.getString(4).equals("1") ? true : false;
+                }
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                 Date open = null;
                 Date close = null;
