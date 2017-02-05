@@ -39,7 +39,7 @@ public class DataManager extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(
                 "CREATE TABLE ticketMachines(" +
-                        "id INTEGER," +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                         "creditCard INTEGER," +
                         "x REAL," +
                         "y REAL," +
@@ -82,7 +82,6 @@ public class DataManager extends SQLiteOpenHelper {
     public void addTicketMachineToDatabase(TicketMachine ticketMachine) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("creditCard", (ticketMachine.isPaymentByCreditCardAvailable() ? 1 : 0));
-        contentValues.put("id", ticketMachine.getID());
         contentValues.put("x", ticketMachine.getCoordinates().longitude);
         contentValues.put("y", ticketMachine.getCoordinates().latitude);
         contentValues.put("placeName", ticketMachine.getPlaceName());
