@@ -20,6 +20,7 @@ import cosapp.com.nostra.JSON.JSONParser;
 import cosapp.com.nostra.JSON.JSONReaderTask;
 import cosapp.com.nostra.Place.ParkingMachine;
 import cosapp.com.nostra.Place.TicketMachine;
+import cosapp.com.nostra.Place.TicketPoint;
 import cosapp.com.nostra.R;
 import cosapp.com.nostra.Websites;
 import xyz.hanks.library.SmallBang;
@@ -81,6 +82,7 @@ public class SplashScreen extends Activity {
     private void addObjectsToDatabase() {
         addTicketMachines();
         addParkingMachines();
+        addTicketPoints();
     }
 
     private void addTicketMachines() {
@@ -142,6 +144,36 @@ public class SplashScreen extends Activity {
             }
         }
 
+    }
+
+    private void addTicketPoints() {
+        JSONReaderTask task = new JSONReaderTask(Websites.TICKETS_SALE_POINTS);
+        task.execute();
+
+        String result = null;
+        try {
+            result = task.get();
+        } catch (InterruptedException e) {
+            Log.e("loadData", "InterruptedException");
+        } catch (ExecutionException e) {
+            Log.e("loadData", "InterruptedException");
+        }
+
+        ArrayList<TicketPoint> ticketPoints = null;
+
+        if (result != null) {
+            try {
+                ticketPoints = JSONParser.parseTicketPoints(result);
+            } catch (JSONException e) {
+                Log.e("loadData", "JSONException");
+            }
+        }
+
+        if (ticketPoints != null) {
+            for (TicketPoint tp : ticketPoints) {
+                dataManager.addTicketPointToDatabase(tp);
+            }
+        }
     }
 
     private void startMainActivity() {
