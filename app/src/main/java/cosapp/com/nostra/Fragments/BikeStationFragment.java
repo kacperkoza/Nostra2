@@ -54,6 +54,7 @@ public class BikeStationFragment extends android.support.v4.app.Fragment impleme
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
         gpsTracker = new GPSTracker(getContext());
+        gpsTracker.readCoordinates();
 
         //TODO change calls of GPSTracker methods
         fab.setOnClickListener(new View.OnClickListener() {

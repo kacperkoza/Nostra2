@@ -11,7 +11,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.4"
+                android:layout_weight="0.6"
                 android:orientation="horizontal">
 
 
@@ -26,8 +26,6 @@
                         xmlns:app="http://schemas.android.com/apk/res-auto">
                     </fragment>
 
-
-
             </LinearLayout>
 
             <LinearLayout
@@ -37,6 +35,11 @@
                 android:orientation="vertical"
                 android:id="@+id/list_linear_layout">
 
+                <ListView
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
                 <ProgressBar
                     android:id="@+id/progress"
                     android:layout_width="wrap_content"
@@ -44,12 +47,8 @@
                     android:layout_gravity="center_horizontal"
                     android:indeterminate="true"/>
 
-                <ListView
-                    android:id="@+id/list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    xmlns:android="http://schemas.android.com/apk/res/android" />
             </LinearLayout>
+
         </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
@@ -60,8 +59,7 @@
             android:src="@android:drawable/ic_menu_mylocation"
             app:layout_anchor="@+id/map"
             app:layout_anchorGravity="bottom|end"
-            app:backgroundTint="@android:color/holo_green_dark"
-            android:fadeScrollbars="true" />
+            app:backgroundTint="?attr/colorButtonNormal" />
 
 
 </android.support.design.widget.CoordinatorLayout>
