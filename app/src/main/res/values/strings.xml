@@ -16,6 +16,20 @@
     <string name="informations">Informacje</string>
     <string name="help">Pomoc</string>
 
+    <!-- Parking Machines Fragment -->
+    <string name="zone">Strefa: </string>
+
+
+    <!-- Floating Action Button -->
+    <string name="your_position">Twoja pozycja</string>
+
+    <!-- GPS not available dialog window -->
+    <string name="error">Błąd</string>
+    <string name="cannot_get_gps">Nie udało się uzyskać połączenia z GPS.</string>
+    <string name="gps_not_enabled">Usługi lokalizacyjne są wyłączone.
+    Czy chcesz iść do ustawień aby je włączyć?</string>
+    <string name="cancel">Anuluj</string>
+
 
     <!-- Parking Machines list item -->
 
