@@ -1,53 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_height="wrap_content"
-    android:background="@drawable/info_window_gradient"
+    android:background="@drawable/custom_info_bubble"
     android:layout_width="wrap_content">
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
 
         <TextView
             android:text="TextView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/place_textView"
             tools:text="nazwa przystanku"
-            android:gravity="center"
-            android:textStyle="normal|bold" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+            android:textStyle="normal|bold"
+            android:gravity="center_horizontal"/>
 
         <TextView
             android:text="TextView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/description_textView"
             tools:text="Krótki opis"
             android:gravity="center"
-            android:maxWidth="300dp"
-            android:singleLine="false" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            android:maxWidth="275dp"/>
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/radiobutton_on_background"
             android:id="@+id/credit_card_imageView"
-            android:layout_gravity="center_horizontal" />
-    </LinearLayout>
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_credit_card_black_24dp"
+            android:contentDescription="@string/credit_cards"/>
 </LinearLayout>
