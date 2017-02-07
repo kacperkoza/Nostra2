@@ -2,29 +2,35 @@ package cosapp.com.nostra.Fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
+import cosapp.com.nostra.CurrentLocation;
 import cosapp.com.nostra.DataManager;
+import cosapp.com.nostra.LatLngUtils;
 import cosapp.com.nostra.Place.ParkingMachine;
 import cosapp.com.nostra.R;
-
-import static com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom;
 
 public class ParkingMachinesFragment extends Fragment implements OnMapReadyCallback {
     private DataManager mDataManager;
     private GoogleMap mMap;
+    private FloatingActionButton fab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,9 +40,11 @@ public class ParkingMachinesFragment extends Fragment implements OnMapReadyCallb
 
         SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
+
         mapFragment.getMapAsync(this);
 
-        mDataManager = new DataManager(getActivity());
+        floatingActionButtonSetUp(view);
+
         return view;
     }
 
@@ -44,31 +52,60 @@ public class ParkingMachinesFragment extends Fragment implements OnMapReadyCallb
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mDataManager = new DataManager(getActivity());
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngUtils.POZNAN, LatLngUtils.NORMAL_ZOOM));
+
+        fab.setOnClickListener(new CurrentLocation(getContext(), mMap));
+
         ArrayList<ParkingMachine> list = mDataManager.getParkingMachines();
+
         mDataManager.close();
 
         for (ParkingMachine pm : list) {
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.title(pm.getStreet() + " " + pm.getZone());
-            markerOptions.position(pm.getCoordinates());
-            if (pm.getZone().equals("A")) {
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-            } else if (pm.getZone().equals("B")) {
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-            }
+            MarkerOptions markerOptions = fillDataInMarker(pm);
             mMap.addMarker(markerOptions);
         }
 
-        MarkerOptions yourPosition = new MarkerOptions()
-                .position(new LatLng(52.405794, 16.930569))
-                .title("Twoja pozycja")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
-        mMap.addMarker(yourPosition);
-        mMap.moveCamera(newLatLngZoom(new LatLng(52.405794, 16.930569), 18.0f));
+    }
+
+    private MarkerOptions fillDataInMarker(ParkingMachine pm) {
+        return new MarkerOptions()
+                .position(pm.getCoordinates())
+                .title(pm.getStreet())
+                .snippet(getResources().getString(R.string.zone) + " " + pm.getZone())
+                .icon(getProperColor(pm.getZone()));
+    }
+
+    private BitmapDescriptor getProperColor(String zone) {
+        final BitmapDescriptor GREEN_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+        final BitmapDescriptor MAGENTA_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+
+        switch (zone) {
+            case "A":
+                return GREEN_MARKER;
+
+            case "B":
+                return MAGENTA_MARKER;
+
+            default:
+                return null;
+        }
+    }
+
+    private void floatingActionButtonSetUp(View view) {
+        //remove linear layout with ListView.
+        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.list_linear_layout);
+        linearLayout.setVisibility(View.GONE);
+
+        //Set floating action button gravity anchor to end
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+        layoutParams.anchorGravity = Gravity.END;
+        fab.setLayoutParams(layoutParams);
     }
 }
