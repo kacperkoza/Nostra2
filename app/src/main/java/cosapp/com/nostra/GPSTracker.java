@@ -10,38 +10,35 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by kkoza on 03.02.2017.
  */
 public class GPSTracker extends Service implements android.location.LocationListener {
 
-    private final Context mContext;
-
-    // flag for GPS status
-    boolean isGPSEnabled = false;
-
-    // flag for network status
-    boolean isNetworkEnabled = false;
-
-    boolean canGetLocation = false;
-
-    Location location; // location
-    double latitude; // latitude
-    double longitude; // longitude
-
-    // The minimum distance to change Updates in meters
     private static final float MIN_DISTANCE_CHANGE = 10f; // 10 meters
 
-    // The minimum time between updates in milliseconds
     private static final long MIN_TIME_UPDATE = 1000 * 60 * 1; // 1 minute
 
-    protected LocationManager locationManager;
+    private boolean isGPSEnabled = false;
+
+    private boolean isNetworkEnabled = false;
+
+    private boolean canGetLocation = false;
+
+    private LatLng coordinates;
+
+    private final Context mContext;
+
+    private LocationManager locationManager;
+
+    private Location location;
 
     public GPSTracker(Context context) {
         this.mContext = context;
-        getLocation();
+        this.coordinates = new LatLng(0, 0);
     }
 
     @Override
@@ -50,17 +47,14 @@ public class GPSTracker extends Service implements android.location.LocationList
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
-
     }
 
     @Override
     public void onProviderEnabled(String s) {
-
     }
 
     @Override
     public void onProviderDisabled(String s) {
-
     }
 
     @Override
@@ -68,171 +62,112 @@ public class GPSTracker extends Service implements android.location.LocationList
         return null;
     }
 
-    public Location getLocation() {
+    public void readCoordinates() {
+        readProviders();
 
-        locationManager = (LocationManager) mContext
-                .getSystemService(LOCATION_SERVICE);
+        canGetLocation = isGPSAvailable();
+
+        if (isNetworkEnabled) {
+            readFromNetworkProvider();
+        } else if (isGPSEnabled) {
+            readFromGPSProvider();
+        }
+    }
+
+    private boolean isGPSAvailable() {
+        return isGPSEnabled || isNetworkEnabled;
+    }
+
+    private void readProviders() {
+        locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
 
         // getting GPS status
-        isGPSEnabled = locationManager
-                .isProviderEnabled(LocationManager.GPS_PROVIDER);
+        isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
         // getting network status
-        isNetworkEnabled = locationManager
-                .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-        if (!isGPSEnabled && !isNetworkEnabled) {
-            // no network provider is enabled
-        } else {
-            this.canGetLocation = true;
-            // First get location from Network Provider
-            if (isNetworkEnabled) {
-                try {
-                    locationManager.requestLocationUpdates(
-                            LocationManager.NETWORK_PROVIDER,
-                            MIN_TIME_UPDATE,
-                            MIN_DISTANCE_CHANGE,
-                            this);
-                } catch (SecurityException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    locationManager.requestLocationUpdates(
-                            LocationManager.NETWORK_PROVIDER,
-                            MIN_TIME_UPDATE,
-                            MIN_DISTANCE_CHANGE,
-                            this);
-                } catch (SecurityException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    if (locationManager != null) {
-                        location = locationManager
-                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        if (location != null) {
-                            latitude = location.getLatitude();
-                            longitude = location.getLongitude();
-                        }
-                    }
-                } catch (SecurityException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // if GPS Enabled get lat/long using GPS Services
-            if (isGPSEnabled) {
-                if (location == null) {
-                    try {
-                        locationManager.requestLocationUpdates(
-                                LocationManager.GPS_PROVIDER,
-                                MIN_TIME_UPDATE,
-                                MIN_DISTANCE_CHANGE, this);
-                    } catch (SecurityException e) {
-                        e.printStackTrace();
-                    }
-
-                    Log.d("GPS Enabled", "GPS Enabled");
-
-                    if (locationManager != null) {
-                        try {
-                            location = locationManager
-                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                        } catch (SecurityException e) {
-                            e.printStackTrace();
-                        }
-                        if (location != null) {
-                            latitude = location.getLatitude();
-                            longitude = location.getLongitude();
-                            }
-                        }
-                    }
-                }
-            }
-
-        return location;
     }
 
-    /**
-     * Function to get latitude
-     * */
-    public double getLatitude(){
-        if(location != null){
-            latitude = location.getLatitude();
+    private void readFromNetworkProvider() throws SecurityException {
+        // First get location from Network Provider
+        if (isNetworkEnabled) {
+            locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    MIN_TIME_UPDATE,
+                    MIN_DISTANCE_CHANGE,
+                    this);
         }
 
-        // return latitude
-        return latitude;
+        if (locationManager != null) {
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if (location != null) {
+                coordinates = LatLngUtils.locationToLatLng(location);
+            }
+        }
     }
 
-    /**
-     * Function to get longitude
-     * */
-    public double getLongitude(){
-        if(location != null){
-            longitude = location.getLongitude();
+    private void readFromGPSProvider() throws SecurityException {
+        // if GPS Enabled get lat/long using GPS Services
+        if (isGPSEnabled) {
+            locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    MIN_TIME_UPDATE,
+                    MIN_DISTANCE_CHANGE,
+                    this);
         }
 
-        // return longitude
-        return longitude;
+        if (locationManager != null) {
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (location != null) {
+                coordinates = LatLngUtils.locationToLatLng(location);
+            }
+        }
     }
 
-    /**
-     * Function to check if best network provider
-     * @return boolean
-     * */
+    public LatLng getCurrentLocation(){
+        if (location != null){
+            coordinates = LatLngUtils.locationToLatLng(location);
+        }
+        return coordinates;
+    }
+
     public boolean canGetLocation() {
-        return this.canGetLocation;
+        return canGetLocation;
     }
 
-    /**
-     * Function to show settings alert dialog
-     * */
     public void showSettingsAlert(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
 
-        //alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        alertDialog.setTitle(mContext.getResources().getString(R.string.cannot_get_gps));
 
-        // Setting Dialog Title
-        alertDialog.setTitle("GPS is settings");
+        alertDialog.setMessage(mContext.getResources().getString(R.string.gps_not_enabled));
 
-        // Setting Dialog Message
-        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
-
-        // Setting Icon to Dialog
-        //alertDialog.setIcon(R.drawable.delete);
-
-        // On pressing Settings button
-        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton(mContext.getResources().getString(R.string.settings)
+                , new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog,int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 mContext.startActivity(intent);
             }
         });
 
-        // on pressing cancel button
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton(mContext.getResources().getString(R.string.cancel)
+                , new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
 
-        // Showing Alert Message
         alertDialog.show();
     }
 
-    /**
-     * Stop using GPS listener
-     * Calling this function will stop using GPS in your app
-     * */
     public void stopUsingGPS(){
         if (locationManager != null){
             try {
                 locationManager.removeUpdates(GPSTracker.this);
             } catch (SecurityException e ) {
-
+                e.printStackTrace();
             }
-            }
+        }
     }
 }
