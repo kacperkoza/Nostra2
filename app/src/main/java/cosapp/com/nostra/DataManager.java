@@ -283,13 +283,14 @@ public class DataManager extends SQLiteOpenHelper {
 
     public ArrayList<TicketMachine> getTicketMachines(){
         ArrayList<TicketMachine> list = new ArrayList<>(60);
-        Cursor cursor = makeQuery("ticketMachines", "x", "y", "placeName", "description");
+        Cursor cursor = makeQuery("ticketMachines", "x", "y", "placeName", "description", "creditCard");
 
         while (cursor.moveToNext()) {
             TicketMachine ticketMachine = new TicketMachine();
             ticketMachine.setCoordinates(new LatLng(cursor.getDouble(0), cursor.getDouble(1)));
             ticketMachine.setPlaceName(cursor.getString(2));
             ticketMachine.setDescription(cursor.getString(3));
+            ticketMachine.setPaymentByCreditCardAvailable(cursor.getInt(4) == 1);
             list.add(ticketMachine);
         }
         return list;
