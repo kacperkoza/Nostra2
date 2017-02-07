@@ -10,8 +10,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by kkoza on 03.02.2017.
@@ -20,15 +23,13 @@ public class GPSTracker extends Service implements android.location.LocationList
 
     private static final float MIN_DISTANCE_CHANGE = 10f; // 10 meters
 
-    private static final long MIN_TIME_UPDATE = 1000 * 60 * 1; // 1 minute
+    private static final long MIN_TIME_UPDATE = 1000 * 6; // in ms
 
     private boolean isGPSEnabled = false;
 
     private boolean isNetworkEnabled = false;
 
     private boolean canGetLocation = false;
-
-    private LatLng coordinates;
 
     private final Context mContext;
 
@@ -38,11 +39,11 @@ public class GPSTracker extends Service implements android.location.LocationList
 
     public GPSTracker(Context context) {
         this.mContext = context;
-        this.coordinates = new LatLng(0, 0);
     }
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.d(TAG, "onLocationChanged: " + location.toString());
     }
 
     @Override
@@ -101,9 +102,7 @@ public class GPSTracker extends Service implements android.location.LocationList
 
         if (locationManager != null) {
             location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if (location != null) {
-                coordinates = LatLngUtils.locationToLatLng(location);
-            }
+            getCurrentLocation();
         }
     }
 
@@ -119,17 +118,12 @@ public class GPSTracker extends Service implements android.location.LocationList
 
         if (locationManager != null) {
             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (location != null) {
-                coordinates = LatLngUtils.locationToLatLng(location);
-            }
+            getCurrentLocation();
         }
     }
 
     public LatLng getCurrentLocation(){
-        if (location != null){
-            coordinates = LatLngUtils.locationToLatLng(location);
-        }
-        return coordinates;
+            return location != null ? LatLngUtils.locationToLatLng(location) : null;
     }
 
     public boolean canGetLocation() {
