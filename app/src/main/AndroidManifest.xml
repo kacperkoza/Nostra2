@@ -33,20 +33,18 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Activities.MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
-        <activity
             android:name=".Activities.MenuActivity"
             android:label="@string/title_activity_menu"
             android:theme="@style/Theme.AppCompat.NoActionBar">
-        </activity>
-
-        <activity android:name=".Activities.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity android:name=".Activities.SplashScreen">
+
         </activity>
     </application>
 
