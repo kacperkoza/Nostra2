@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -105,7 +106,9 @@ public class ParkingMachinesFragment extends Fragment implements OnMapReadyCallb
         //Set floating action button gravity anchor to end
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
         CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
-        layoutParams.anchorGravity = Gravity.END;
+        layoutParams.setAnchorId(R.id.map);
+        layoutParams.anchorGravity = Gravity.TOP | Gravity.END | GravityCompat.END;
+        layoutParams.setMargins(48, 48, 48, 48);
         fab.setLayoutParams(layoutParams);
     }
 }
