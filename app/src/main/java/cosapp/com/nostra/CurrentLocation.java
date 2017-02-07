@@ -16,13 +16,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class CurrentLocation implements View.OnClickListener {
     private GPSTracker gpsTracker;
     private GoogleMap googleMap;
-    private boolean markerCreated;
     private Marker marker;
 
     public CurrentLocation(Context context, GoogleMap googleMap) {
         this.gpsTracker = new GPSTracker(context);
         this.googleMap = googleMap;
-        this.markerCreated = false;
+        this.marker = null;
     }
 
     @Override
@@ -32,14 +31,11 @@ public class CurrentLocation implements View.OnClickListener {
         if (gpsTracker.canGetLocation()) {
             LatLng currentPosition = gpsTracker.getCurrentLocation();
 
-            if (markerNotCreated()) {
-                marker = googleMap.addMarker(
-                        new MarkerOptions()
+            if (marker == null) {
+                marker = googleMap.addMarker(new MarkerOptions()
                                 .position(currentPosition)
-                                .title(view.getContext().getResources().getString(R.string.your_position))
-                );
+                                .title(view.getContext().getResources().getString(R.string.your_position)));
                 marker.showInfoWindow();
-                markerCreated = true;
             } else {
                 marker.setPosition(currentPosition);
             }
@@ -51,7 +47,4 @@ public class CurrentLocation implements View.OnClickListener {
         gpsTracker.stopUsingGPS();
     }
 
-    private boolean markerNotCreated() {
-        return !markerCreated;
-    }
 }
