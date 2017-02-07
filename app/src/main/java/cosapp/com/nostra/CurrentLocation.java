@@ -1,6 +1,7 @@
 package cosapp.com.nostra;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -35,14 +36,16 @@ public class CurrentLocation implements View.OnClickListener {
                 marker = googleMap.addMarker(new MarkerOptions()
                                 .position(currentPosition)
                                 .title(view.getContext().getResources().getString(R.string.your_position)));
-                marker.showInfoWindow();
             } else {
                 marker.setPosition(currentPosition);
+                Log.d("CurrentLocation", "onClick: " + currentPosition.toString());
             }
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, LatLngUtils.CLOSE_ZOOM));
         } else {
             gpsTracker.showSettingsAlert();
         }
+
+        marker.showInfoWindow();
 
         gpsTracker.stopUsingGPS();
     }
