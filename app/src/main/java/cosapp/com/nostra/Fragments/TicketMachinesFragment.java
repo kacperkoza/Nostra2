@@ -1,10 +1,10 @@
 package cosapp.com.nostra.Fragments;
 
 
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,21 +12,21 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
+import cosapp.com.nostra.CurrentLocation;
 import cosapp.com.nostra.DataManager;
+import cosapp.com.nostra.LatLngUtils;
 import cosapp.com.nostra.Place.TicketMachine;
 import cosapp.com.nostra.R;
 
@@ -39,26 +39,26 @@ public class TicketMachinesFragment extends android.support.v4.app.Fragment impl
     private GoogleMap mMap;
     private ArrayList<TicketMachine> machines;
     private ListView lv;
-    private ProgressBar progressBar;
-
+    private FloatingActionButton fab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.activity_maps, container, false);
+        View view = inflater.inflate(R.layout.activity_maps, null, false);
 
         SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
+
         lv = (ListView) view.findViewById(R.id.list);
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
         mDataManager = new DataManager(getActivity());
-        machines = new ArrayList<>(60);
         machines = mDataManager.getTicketMachines();
         mDataManager.close();
+
         return view;
     }
 
@@ -74,24 +74,19 @@ public class TicketMachinesFragment extends android.support.v4.app.Fragment impl
 
         mMap = googleMap;
 
-        mMap.setInfoWindowAdapter(new TicketMachinesInfoWindow());
+        fab.setOnClickListener(new CurrentLocation(getContext(), mMap));
 
         for (TicketMachine tm : machines) {
             LatLng latLng = tm.getCoordinates();
-            String name = tm.getPlaceName();
-            String description = tm.getDescription();
             mMap.addMarker(new MarkerOptions()
+                    .title(tm.getPlaceName())
+                    .snippet(tm.getDescription())
                     .position(latLng)
-                    .title(name)
-                    .snippet(description));
+            ).setTag(tm.isPaymentByCreditCardAvailable());
         }
-        mMap.addMarker(new MarkerOptions().position(new LatLng(52.405794, 16.930569)).title("Aktualna pozycja")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(machines.get(0).getCoordinates(), 12.0f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngUtils.POZNAN, LatLngUtils.NORMAL_ZOOM));
 
-
-
-        progressBar.setVisibility(View.GONE);
+        mMap.setInfoWindowAdapter(new TicketMachinesInfoWindow());
 
         ArrayAdapter<String> names = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
         names.add("scroll plx");
@@ -101,13 +96,9 @@ public class TicketMachinesFragment extends android.support.v4.app.Fragment impl
     }
 
     private class TicketMachinesInfoWindow implements GoogleMap.InfoWindowAdapter {
-        private View view;
-
         @Override
         public View getInfoWindow(Marker marker) {
-            LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-            view = layoutInflater.inflate(R.layout.info_window_ticket_machines, null);
-            view.setBackgroundResource(R.drawable.info_window_gradient);
+            View view = getActivity().getLayoutInflater().inflate(R.layout.info_window_ticket_machines, null);
 
             TextView title = (TextView) view.findViewById(R.id.place_textView);
             title.setText(marker.getTitle());
@@ -117,17 +108,29 @@ public class TicketMachinesFragment extends android.support.v4.app.Fragment impl
             description.setText(marker.getSnippet());
             description.setTextColor(Color.BLACK);
 
+            if (marker.getSnippet() == null) {
+                description.setVisibility(View.GONE);
+            }
+
             ImageView creditCards = (ImageView) view.findViewById(R.id.credit_card_imageView);
 
+            boolean creditCardNotAccepted = false;
+            if (marker.getTag() != null) {
+                creditCardNotAccepted  = !((boolean) marker.getTag());
+            }
+
+            if (marker.getTag() == null || creditCardNotAccepted) {
+                creditCards.setVisibility(View.GONE);
+            } else {
+
+
+            }
             return view;
         }
 
         @Override
         public View getInfoContents(Marker marker) {
-            LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-            view = layoutInflater.inflate(R.layout.info_window_ticket_machines, null);
-            view.setBackgroundResource(R.drawable.info_window_gradient);
-            return view;
+            return null;
         }
     }
 }
