@@ -14,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import cosapp.com.nostra.Fragments.BikeStationFragment;
-import cosapp.com.nostra.Fragments.ItemFragment;
 import cosapp.com.nostra.Fragments.ParkingMachinesFragment;
 import cosapp.com.nostra.Fragments.TicketMachinesFragment;
 import cosapp.com.nostra.Fragments.TicketPointsFragment;
@@ -147,6 +146,8 @@ public class MenuActivity extends AppCompatActivity
                 fragmentClass = TicketMachinesFragment.class;
                 break;
         }
+        // Close the navigation drawer
+        mDrawer.closeDrawers();
 
         try {
             fragment = (Fragment) fragmentClass.newInstance();
@@ -154,11 +155,12 @@ public class MenuActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        ItemFragment itemFragment = new ItemFragment();
+        //ItemFragment itemFragment = new ItemFragment();
 
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.mapContent, fragment).commit();
+        //fragmentManager.beginTransaction().replace(R.id.listContent, itemFragment).commit();
 
         // Highlight the selected item has been done by NavigationView
         if (lastSelectedMenuItem != null) {
@@ -170,7 +172,6 @@ public class MenuActivity extends AppCompatActivity
         // Set action bar title
         setTitle(menuItem.getTitle());
 
-        // Close the navigation drawer
-        mDrawer.closeDrawers();
+
     }
 }
