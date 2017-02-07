@@ -38,6 +38,10 @@ public class TicketMachine extends Place {
         this.description = description;
     }
 
+    public void setPaymentByCreditCardAvailable(boolean paymentByCreditCardAvailable) {
+        this.paymentByCreditCardAvailable = paymentByCreditCardAvailable;
+    }
+
     public boolean isPaymentByCreditCardAvailable() {
         return paymentByCreditCardAvailable;
     }
