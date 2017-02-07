@@ -1,4 +1,5 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -11,9 +12,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.6"
+                android:layout_weight="0.1"
                 android:orientation="horizontal">
-
 
                     <fragment
                         android:id="@+id/map"
@@ -31,7 +31,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.4"
+                android:layout_weight="0.2"
                 android:orientation="vertical"
                 android:id="@+id/list_linear_layout">
 
@@ -58,8 +58,6 @@
             android:layout_margin="@dimen/fab_margin"
             android:src="@android:drawable/ic_menu_mylocation"
             app:layout_anchor="@+id/map"
-            app:layout_anchorGravity="bottom|end"
+            app:layout_anchorGravity="top|end"
             app:backgroundTint="?attr/colorButtonNormal" />
-
-
 </android.support.design.widget.CoordinatorLayout>
