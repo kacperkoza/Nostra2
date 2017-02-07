@@ -12,18 +12,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import org.json.JSONException;
-
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import cosapp.com.nostra.DataManager;
 import cosapp.com.nostra.GoogleMaps.GoogleMapsDistance;
-import cosapp.com.nostra.GoogleMaps.GoogleMapsRequestBuilder;
-import cosapp.com.nostra.JSON.JSONParser;
-import cosapp.com.nostra.JSON.JSONReaderTask;
 import cosapp.com.nostra.R;
 
 
@@ -46,38 +38,38 @@ public class ItemFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
-        mDataManager = new DataManager(getActivity());
-        ArrayList<LatLng> list = mDataManager.getCoords();
-        mDataManager.close();
-        LatLng loc = new LatLng(52.405794, 16.930569);
-        String APIResponse  = GoogleMapsRequestBuilder.websiteRequestBuilder(loc, list);
-        JSONReaderTask task = new JSONReaderTask(APIResponse);
-        task.execute();
+//        mDataManager = new DataManager(getActivity());
+//        ArrayList<LatLng> list = mDataManager.getCoords();
+//        mDataManager.close();
+//        LatLng loc = new LatLng(52.405794, 16.930569);
+//        String APIResponse  = GoogleMapsRequestBuilder.websiteRequestBuilder(loc, list);
+//        JSONReaderTask task = new JSONReaderTask(APIResponse);
+//        task.execute();
+//
+//        String result = null;
+//        try {
+//            result = task.get();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
+//
+//        ArrayList<GoogleMapsDistance> distances = null;
+//        try {
+//            distances = JSONParser.parseGoogleMapsResponse(result);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
-        String result = null;
-        try {
-            result = task.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        ArrayList<GoogleMapsDistance> distances = null;
-        try {
-            distances = JSONParser.parseGoogleMapsResponse(result);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        ParkingMachineListAdapter adapter = new ParkingMachineListAdapter(getActivity(), distances);
-        setListAdapter(adapter);
+//        ParkingMachineListAdapter adapter = new ParkingMachineListAdapter(getActivity(), distances);
+//        setListAdapter(adapter);
         //BELOW WORKS!!!
-         /*       ArrayAdapter<String> names = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
+        ArrayAdapter<String> names = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
         names.add("lol");
         names.add("lol");
         names.add("lol");
-        setListAdapter(names);*/
+        setListAdapter(names);
         return view;
     }
 
