@@ -2,7 +2,10 @@ package cosapp.com.nostra;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -33,6 +36,14 @@ public final class Utils {
             }
         });
         alertDialog.show();
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        Log.d("isNetworkAvailable", (activeNetworkInfo != null && activeNetworkInfo.isConnected()) ? "true" : "false");
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 }
