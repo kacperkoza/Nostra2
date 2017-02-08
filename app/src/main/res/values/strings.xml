@@ -51,4 +51,8 @@
 
     <string name="credit_cards">Możliwa płatności kartą.</string>
 
+    <string name="access_to_the_internet">Dostęp do internetu podczas pierwszego uruchomienia
+    jest obowiązkowy.</string>
+    <string name="no_access_last_udpate">Brak dostępu do internetu. Wyświetlone dane pochodzą z: </string>
+
 </resources>
