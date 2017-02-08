@@ -68,7 +68,9 @@ public class XMLParser {
                                 bikesNumbers = bikesNumbers.replaceAll(",", ", ");
                             }
 
-                            list.add(new BikeStation(new LatLng(lat, lng), name, bikesNumbers, freeBikes));
+                            int id = Integer.parseInt(el.getAttribute("number"));
+
+                            list.add(new BikeStation(id, new LatLng(lat, lng), name, bikesNumbers, freeBikes));
                         }
                     }
                     return list;
