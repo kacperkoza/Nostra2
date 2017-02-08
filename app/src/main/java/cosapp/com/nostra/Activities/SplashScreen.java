@@ -18,11 +18,13 @@ import java.util.concurrent.ExecutionException;
 import cosapp.com.nostra.DataManager;
 import cosapp.com.nostra.JSON.JSONParser;
 import cosapp.com.nostra.JSON.JSONReaderTask;
+import cosapp.com.nostra.Place.BikeStation;
 import cosapp.com.nostra.Place.ParkingMachine;
 import cosapp.com.nostra.Place.TicketMachine;
 import cosapp.com.nostra.Place.TicketPoint;
 import cosapp.com.nostra.R;
 import cosapp.com.nostra.Websites;
+import cosapp.com.nostra.XMLParser;
 import xyz.hanks.library.SmallBang;
 
 public class SplashScreen extends Activity {
@@ -83,6 +85,7 @@ public class SplashScreen extends Activity {
         addTicketMachines();
         addParkingMachines();
         addTicketPoints();
+        addBikeStations();
     }
 
     private void addTicketMachines() {
@@ -174,6 +177,18 @@ public class SplashScreen extends Activity {
                 dataManager.addTicketPointToDatabase(tp);
             }
         }
+    }
+
+    private void addBikeStations() {
+        XMLParser xmlParser = new XMLParser(Websites.BIKE_STATIONS);
+
+        ArrayList<BikeStation> bikeStations = xmlParser.parseNextBike();
+
+        for (BikeStation bs : bikeStations) {
+            dataManager.addBikeStationToDatabase(bs);
+        }
+
+        dataManager.close();
     }
 
     private void startMainActivity() {
