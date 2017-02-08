@@ -15,11 +15,24 @@ import com.google.android.gms.maps.model.LatLng;
 //TODO further implementation when city bikes will be available.
 
 public class BikeStation extends Place {
+    private int freeBikes;
+    private String bikeNumbers;
+
 
     public BikeStation() {
     }
 
-    public BikeStation(LatLng coordinates, String placeName) {
+    public BikeStation(LatLng coordinates, String placeName, String bikeNumbers, int freeBikes) {
         super(coordinates, placeName);
+        this.bikeNumbers = bikeNumbers;
+        this.freeBikes = freeBikes;
+    }
+
+    public int getFreeBikes() {
+        return freeBikes;
+    }
+
+    public String getBikeNumbers() {
+        return bikeNumbers;
     }
 }
