@@ -5,7 +5,7 @@ package cosapp.com.nostra;
  */
 
 /**
- * <p>This holds URLs of websites with:</p>
+ * <p>This class holds URLs of websites with:</p>
  * <ul>
  *     <li>Ticket machines - JSON</li>
  *     <li>Bike stations - XML</li>
