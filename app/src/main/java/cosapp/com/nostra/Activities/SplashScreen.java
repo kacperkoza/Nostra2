@@ -1,11 +1,11 @@
 package cosapp.com.nostra.Activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,11 +23,12 @@ import cosapp.com.nostra.Place.ParkingMachine;
 import cosapp.com.nostra.Place.TicketMachine;
 import cosapp.com.nostra.Place.TicketPoint;
 import cosapp.com.nostra.R;
+import cosapp.com.nostra.Utils;
 import cosapp.com.nostra.Websites;
 import cosapp.com.nostra.XMLParser;
 import xyz.hanks.library.SmallBang;
 
-public class SplashScreen extends Activity {
+public class SplashScreen extends AppCompatActivity {
     private ImageView imageView;
     private DataManager dataManager;
     private SmallBang smallBang;
@@ -48,16 +49,24 @@ public class SplashScreen extends Activity {
         });
 
         dataManager = new DataManager(this);
-
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (isFirstRun() && !Utils.isNetworkAvailable(this)) {
+//            Utils.makeAlertWindow(getApplicationContext(),
+//                    getResources().getString(R.string.error),
+//                    getResources().getString(R.string.access_to_the_internet));
+      //TODO IMPLEMENT DIALOG WINDOW
+            System.exit(0);
+        }
+
         if (isFirstRun()) {
             addObjectsToDatabase();
         }
+        modifyFirstRunVariableInSharedPreferences();
         Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
@@ -73,12 +82,19 @@ public class SplashScreen extends Activity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isFirstRun = sharedPreferences.getBoolean("is_first_run", true);
         Log.d("is first run?", "" + isFirstRun);
+        return isFirstRun;
+
+    }
+
+    private void modifyFirstRunVariableInSharedPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isFirstRun = sharedPreferences.getBoolean("is_first_run", true);
+
         if (isFirstRun) {
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
             editor.putBoolean("is_first_run", false);
             editor.commit();
         }
-        return isFirstRun;
     }
 
     private void addObjectsToDatabase() {
@@ -187,8 +203,16 @@ public class SplashScreen extends Activity {
         for (BikeStation bs : bikeStations) {
             dataManager.addBikeStationToDatabase(bs);
         }
-
         dataManager.close();
+
+        addTimeOfLastUpdate(xmlParser);
+    }
+
+    private void addTimeOfLastUpdate(XMLParser xmlParser) {
+        String lastUpdateTime = xmlParser.readUpdateTime();
+        SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        edit.putString("lastUpdateTime", lastUpdateTime);
+        edit.commit();
     }
 
     private void startMainActivity() {
