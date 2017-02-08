@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import cosapp.com.nostra.Place.BikeStation;
 import cosapp.com.nostra.Place.ParkingMachine;
 import cosapp.com.nostra.Place.TicketMachine;
 import cosapp.com.nostra.Place.TicketPoint;
@@ -69,10 +70,43 @@ public class DataManager extends SQLiteOpenHelper {
                         "isOpened24h INTEGER," +
                         "isClosed24h INTEGER, " +
                         "FOREIGN KEY(id) REFERENCES ticketPoints(id));");
+
+        sqLiteDatabase.execSQL(
+                "CREATE TABLE bikeStations(" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "x REAL," +
+                        "y REAL," +
+                        "placeName TEXT);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    }
+
+    public void addBikeStationToDatabase(BikeStation bikeStation) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("x", bikeStation.getCoordinates().longitude);
+        contentValues.put("y", bikeStation.getCoordinates().latitude);
+        contentValues.put("placeName", bikeStation.getPlaceName());
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.insertOrThrow("bikeStations", null, contentValues);
+        db.close();
+    }
+
+    public ArrayList<BikeStation> getBikeStations() {
+        ArrayList<BikeStation> list = new ArrayList<>(60);
+
+        Cursor cursor = makeQuery("bikeStations", "x", "y", "placeName");
+
+        while (cursor.moveToNext()) {
+            double x = cursor.getDouble(0);
+            double y = cursor.getDouble(1);
+            String placeName = cursor.getString(2);
+
+            list.add(new BikeStation(new LatLng(x, y),placeName, null, 0));
+        }
+        return list;
     }
 
     /**
