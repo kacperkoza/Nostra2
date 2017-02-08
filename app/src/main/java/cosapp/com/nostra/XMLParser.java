@@ -56,15 +56,19 @@ public class XMLParser {
 
                             double lat = Double.parseDouble(el.getAttribute("lat"));
                             double lng = Double.parseDouble(el.getAttribute("lng"));
+
                             String name = el.getAttribute("name");
 
-                            //TODO:
-                            //City bikes are currently unavailable.
-                            //Cannot proceed with further implementation
-                            list.add(new BikeStation(new LatLng(lat, lng), name));
+                            int freeBikes = Integer.parseInt(el.getAttribute("bikes"));
 
-                            System.out.println(el.getAttribute("bikes"));
-                            System.out.println(el.getAttribute("bike_racks"));
+                            String bikesNumbers = "";
+
+                            if (freeBikes > 0) {
+                                bikesNumbers = el.getAttribute("bike_numbers");
+                                bikesNumbers = bikesNumbers.replaceAll(",", ", ");
+                            }
+
+                            list.add(new BikeStation(new LatLng(lat, lng), name, bikesNumbers, freeBikes));
                         }
                     }
                     return list;
