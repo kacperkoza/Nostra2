@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.LatLng;
 //TODO further implementation when city bikes will be available.
 
 public class BikeStation extends Place {
+    private int id;
     private int freeBikes;
     private String bikeNumbers;
 
@@ -22,8 +23,9 @@ public class BikeStation extends Place {
     public BikeStation() {
     }
 
-    public BikeStation(LatLng coordinates, String placeName, String bikeNumbers, int freeBikes) {
+    public BikeStation(int id, LatLng coordinates, String placeName, String bikeNumbers, int freeBikes) {
         super(coordinates, placeName);
+        this.id = id;
         this.bikeNumbers = bikeNumbers;
         this.freeBikes = freeBikes;
     }
@@ -34,5 +36,9 @@ public class BikeStation extends Place {
 
     public String getBikeNumbers() {
         return bikeNumbers;
+    }
+
+    public int getId() {
+        return id;
     }
 }
