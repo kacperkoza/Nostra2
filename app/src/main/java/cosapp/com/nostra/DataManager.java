@@ -73,10 +73,12 @@ public class DataManager extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(
                 "CREATE TABLE bikeStations(" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "id INTEGER PRIMARY KEY," +
                         "x REAL," +
                         "y REAL," +
-                        "placeName TEXT);");
+                        "placeName TEXT," +
+                        "freeBikes INTEGER," +
+                        "bikesNumbers TEXT);");
     }
 
     @Override
@@ -85,9 +87,12 @@ public class DataManager extends SQLiteOpenHelper {
 
     public void addBikeStationToDatabase(BikeStation bikeStation) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put("x", bikeStation.getCoordinates().longitude);
-        contentValues.put("y", bikeStation.getCoordinates().latitude);
+        contentValues.put("id", bikeStation.getId());
+        contentValues.put("x", bikeStation.getCoordinates().latitude);
+        contentValues.put("y", bikeStation.getCoordinates().longitude);
         contentValues.put("placeName", bikeStation.getPlaceName());
+        contentValues.put("freeBikes", bikeStation.getFreeBikes());
+        contentValues.put("bikesNumbers", bikeStation.getBikeNumbers());
 
         SQLiteDatabase db = getWritableDatabase();
         db.insertOrThrow("bikeStations", null, contentValues);
@@ -97,16 +102,30 @@ public class DataManager extends SQLiteOpenHelper {
     public ArrayList<BikeStation> getBikeStations() {
         ArrayList<BikeStation> list = new ArrayList<>(60);
 
-        Cursor cursor = makeQuery("bikeStations", "x", "y", "placeName");
+        Cursor cursor = makeQuery("bikeStations", "x", "y", "placeName", "freeBikes", "bikesNumbers" );
 
         while (cursor.moveToNext()) {
             double x = cursor.getDouble(0);
             double y = cursor.getDouble(1);
             String placeName = cursor.getString(2);
+            int freeBikes = cursor.getInt(3);
+            String bikesNumbers = cursor.getString(4);
 
-            list.add(new BikeStation(new LatLng(x, y),placeName, null, 0));
+            list.add(new BikeStation(0, new LatLng(x, y),placeName, bikesNumbers, freeBikes));
         }
         return list;
+    }
+
+    public void updateBikeStation(BikeStation bikeStation) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("freeBikes", bikeStation.getFreeBikes());
+        contentValues.put("bikesNumbers", bikeStation.getBikeNumbers());
+
+        String[] whereArgs = { Integer.toString(bikeStation.getId()) };
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.update("bikeStations", contentValues, "id = ?", whereArgs);
+        db.close();
     }
 
     /**
