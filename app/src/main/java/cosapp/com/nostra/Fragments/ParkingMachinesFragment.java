@@ -82,19 +82,32 @@ public class ParkingMachinesFragment extends Fragment implements OnMapReadyCallb
                 .icon(getProperColor(pm.getZone()));
     }
 
-    private BitmapDescriptor getProperColor(String zone) {
-        final BitmapDescriptor GREEN_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-        final BitmapDescriptor MAGENTA_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+    /**
+     * <p>Zone:
+     * <ul>
+     *     <li>A - Red marker</li>
+     *     <li>B- Yellow marker</li>
+     *     <li>C - Green marker</li>
+     * </ul>
+     *  @link <a href="http://www.zdm.poznan.pl/parking_zone.php">ZDM Parking zones</a>
+     * </p>
+     *
+     * @param zone
+     * @return
+     */
 
+    private BitmapDescriptor getProperColor(String zone) {
+        final BitmapDescriptor YELLOW_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+        final BitmapDescriptor GREEN_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
         switch (zone) {
             case "A":
-                return GREEN_MARKER;
+                return null;
 
             case "B":
-                return MAGENTA_MARKER;
+                return YELLOW_MARKER;
 
             default:
-                return null;
+                return GREEN_MARKER;
         }
     }
 
