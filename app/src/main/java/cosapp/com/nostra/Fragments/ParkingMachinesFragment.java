@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 
 import cosapp.com.nostra.CurrentLocation;
 import cosapp.com.nostra.DataManager;
+import cosapp.com.nostra.LatLngUtils;
 import cosapp.com.nostra.Place.ParkingMachine;
 import cosapp.com.nostra.R;
 
@@ -42,7 +44,7 @@ public class ParkingMachinesFragment extends Fragment implements OnMapReadyCallb
 
         mapFragment.getMapAsync(this);
 
-        floatingActionButtonSetUp(view);
+        removeListLayoutAndSetFabAnchor(view);
 
         mDataManager = new DataManager(getActivity());
 
@@ -58,9 +60,13 @@ public class ParkingMachinesFragment extends Fragment implements OnMapReadyCallb
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                LatLngUtils.POZNAN,
+                LatLngUtils.NORMAL_ZOOM
+        ));
 
         CurrentLocation currentLocation = new CurrentLocation(getContext(), mMap);
-        fab.setOnClickListener(currentLocation); //read curret location onClick floating button
+        fab.setOnClickListener(currentLocation); //read current location onClick floating button
 
         ArrayList<ParkingMachine> list = mDataManager.getParkingMachines();
         mDataManager.close();
@@ -89,19 +95,19 @@ public class ParkingMachinesFragment extends Fragment implements OnMapReadyCallb
      *     <li>B- Yellow marker</li>
      *     <li>C - Green marker</li>
      * </ul>
-     *  @link <a href="http://www.zdm.poznan.pl/parking_zone.php">ZDM Parking zones</a>
+     *  <a href="http://www.zdm.poznan.pl/parking_zone.php">ZDM Parking zones</a>
      * </p>
      *
      * @param zone
      * @return
      */
 
-    private BitmapDescriptor getProperColor(String zone) {
+    private @Nullable BitmapDescriptor getProperColor(String zone) {
         final BitmapDescriptor YELLOW_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
         final BitmapDescriptor GREEN_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
         switch (zone) {
             case "A":
-                return null;
+                return null; //null is default - red color
 
             case "B":
                 return YELLOW_MARKER;
@@ -111,7 +117,7 @@ public class ParkingMachinesFragment extends Fragment implements OnMapReadyCallb
         }
     }
 
-    private void floatingActionButtonSetUp(View view) {
+    private void removeListLayoutAndSetFabAnchor(View view) {
         //remove linear layout with ListView.
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.list_linear_layout);
         linearLayout.setVisibility(View.GONE);
@@ -120,7 +126,7 @@ public class ParkingMachinesFragment extends Fragment implements OnMapReadyCallb
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
         CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
         layoutParams.setAnchorId(R.id.map);
-        layoutParams.anchorGravity = Gravity.TOP | Gravity.END | GravityCompat.END;
+        layoutParams.anchorGravity = Gravity.TOP | GravityCompat.END;
         layoutParams.setMargins(48, 48, 48, 48);
         fab.setLayoutParams(layoutParams);
     }
