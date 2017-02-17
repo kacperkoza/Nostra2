@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 
 import cosapp.com.nostra.CurrentLocation;
 import cosapp.com.nostra.DataManager;
-import cosapp.com.nostra.LatLngUtils;
 import cosapp.com.nostra.Place.ParkingMachine;
 import cosapp.com.nostra.R;
 
@@ -46,31 +44,33 @@ public class ParkingMachinesFragment extends Fragment implements OnMapReadyCallb
 
         floatingActionButtonSetUp(view);
 
+        mDataManager = new DataManager(getActivity());
+
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        mDataManager = new DataManager(getActivity());
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngUtils.POZNAN, LatLngUtils.NORMAL_ZOOM));
 
-        fab.setOnClickListener(new CurrentLocation(getContext(), mMap));
+
+        CurrentLocation currentLocation = new CurrentLocation(getContext(), mMap);
+        fab.setOnClickListener(currentLocation); //read curret location onClick floating button
 
         ArrayList<ParkingMachine> list = mDataManager.getParkingMachines();
-
         mDataManager.close();
 
         for (ParkingMachine pm : list) {
             MarkerOptions markerOptions = fillDataInMarker(pm);
             mMap.addMarker(markerOptions);
         }
+
+        currentLocation.onClick(null); //read current location first time
 
     }
 
