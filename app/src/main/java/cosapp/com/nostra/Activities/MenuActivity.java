@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import cosapp.com.nostra.Fragments.BikeStationFragment;
 import cosapp.com.nostra.Fragments.ParkingMachinesFragment;
@@ -25,6 +26,8 @@ public class MenuActivity extends AppCompatActivity
     private Toolbar toolbar;
     private NavigationView nvDrawer;
     private MenuItem lastSelectedMenuItem;
+    private Class fragmentClass;
+    private Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,10 +119,9 @@ public class MenuActivity extends AppCompatActivity
 
     }
 
-    public void selectDrawerItem(MenuItem menuItem) {
+    public void selectDrawerItem(final MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
-        Fragment fragment = null;
-        Class fragmentClass;
+        fragment = null;
 
         switch (menuItem.getItemId()) {
             case R.id.nav_bikes:
@@ -149,29 +151,41 @@ public class MenuActivity extends AppCompatActivity
         // Close the navigation drawer
         mDrawer.closeDrawers();
 
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        mDrawer.setDrawerListener(new DrawerLayout.DrawerListener() {
+            //wait for drawer to be closed then continute with loading fragment
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                try {
+                    fragment = (Fragment) fragmentClass.newInstance();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-        //ItemFragment itemFragment = new ItemFragment();
+                //ItemFragment itemFragment = new ItemFragment();
 
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.mapContent, fragment).commit();
-        //fragmentManager.beginTransaction().replace(R.id.listContent, itemFragment).commit();
+                // Insert the fragment by replacing any existing fragment
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.mapContent, fragment).commit();
+                //fragmentManager.beginTransaction().replace(R.id.listContent, itemFragment).commit();
 
-        // Highlight the selected item has been done by NavigationView
-        if (lastSelectedMenuItem != null) {
-            lastSelectedMenuItem.setChecked(false);
-        }
-        menuItem.setChecked(true);
-        lastSelectedMenuItem = menuItem;
+                // Highlight the selected item has been done by NavigationView
+                if (lastSelectedMenuItem != null) {
+                    lastSelectedMenuItem.setChecked(false);
+                }
+                menuItem.setChecked(true);
+                lastSelectedMenuItem = menuItem;
 
-        // Set action bar title
-        setTitle(menuItem.getTitle());
+                // Set action bar title
+                setTitle(menuItem.getTitle());
 
+            }
 
+            @Override
+            public void onDrawerStateChanged(int newState) {}
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {}
+            @Override
+            public void onDrawerOpened(View drawerView) {}
+        });
     }
 }
