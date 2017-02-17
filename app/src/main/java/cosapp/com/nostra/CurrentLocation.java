@@ -52,16 +52,11 @@ public class CurrentLocation implements View.OnClickListener {
                             marker = mMap.addMarker(new MarkerOptions()
                                     .title(mContext.getResources().getString(R.string.your_position))
                                     .position(position));
-                            marker.showInfoWindow();
-
-                            animateCameraOnNewLatLng(position);
                         } else {
-                            //change marker position
                             marker.setPosition(position);
-                            marker.showInfoWindow();
-
-                            animateCameraOnNewLatLng(position);
                         }
+                        marker.showInfoWindow();
+                        animateCameraOnNewLatLng(position);
                     }
 
                     private void animateCameraOnNewLatLng(LatLng latLng) {
@@ -69,11 +64,7 @@ public class CurrentLocation implements View.OnClickListener {
                                 CameraUpdateFactory.newLatLngZoom(
                                         latLng,
                                         LatLngUtils.CLOSE_ZOOM));
-
                     }
-
                 });
     }
-
-
 }

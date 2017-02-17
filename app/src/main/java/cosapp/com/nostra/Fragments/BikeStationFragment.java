@@ -101,6 +101,8 @@ public class BikeStationFragment extends android.support.v4.app.Fragment impleme
         names.add("lol");
         lv.setAdapter(names);
 
+
+
     }
 
     private String getLastUpdateTimeFromSharedPreferences() {
@@ -112,7 +114,6 @@ public class BikeStationFragment extends android.support.v4.app.Fragment impleme
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
         editor.putString("lastUpdateTime", lastUpdateTime);
         editor.commit();
-
     }
 
     private void updateDataBase(ArrayList<BikeStation> list) {
