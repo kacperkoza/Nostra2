@@ -1,7 +1,7 @@
 package cosapp.com.nostra;
 
 import android.content.Context;
-import android.util.Log;
+import android.location.Location;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -10,44 +10,70 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import io.nlopez.smartlocation.OnLocationUpdatedListener;
+import io.nlopez.smartlocation.SmartLocation;
+
 /**
  * Created by kkoza on 07.02.2017.
  */
 
 public class CurrentLocation implements View.OnClickListener {
-    private GPSTracker gpsTracker;
-    private GoogleMap googleMap;
+    private GoogleMap mMap;
     private Marker marker;
+    private Context mContext;
 
-    public CurrentLocation(Context context, GoogleMap googleMap) {
-        this.gpsTracker = new GPSTracker(context);
-        this.googleMap = googleMap;
-        this.marker = null;
+    public CurrentLocation(Context context, GoogleMap mMap) {
+        this.mContext = context;
+        this.mMap = mMap;
     }
 
     @Override
     public void onClick(View view) {
-        gpsTracker.readCoordinates();
+        GPSTracker gpsTracker = new GPSTracker(mContext);
 
-        if (gpsTracker.canGetLocation()) {
-            LatLng currentPosition = gpsTracker.getCurrentLocation();
-
-            if (marker == null) {
-                marker = googleMap.addMarker(new MarkerOptions()
-                                .position(currentPosition)
-                                .title(view.getContext().getResources().getString(R.string.your_position)));
-            } else {
-                marker.setPosition(currentPosition);
-                Log.d("CurrentLocation", "onClick: " + currentPosition.toString());
-            }
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, LatLngUtils.CLOSE_ZOOM));
+        if (gpsTracker.isLocationServiceEnabled()) {
+            getCurrentLocationAndMoveMap();
         } else {
-            gpsTracker.showSettingsAlert();
+            gpsTracker.showLocationSettingsAlert();
         }
-
-        marker.showInfoWindow();
-
-        gpsTracker.stopUsingGPS();
     }
+
+    private void getCurrentLocationAndMoveMap() {
+        SmartLocation
+                .with(mContext)
+                .location()
+                .oneFix()
+                .start(new OnLocationUpdatedListener() {
+                    @Override
+                    public void onLocationUpdated(Location location) {
+                        LatLng position = LatLngUtils.locationToLatLng(location);
+
+                        if (marker == null) {
+                            marker = mMap.addMarker(new MarkerOptions()
+                                    .title(mContext.getResources().getString(R.string.your_position))
+                                    .position(position));
+                            marker.showInfoWindow();
+
+                            animateCameraOnNewLatLng(position);
+                        } else {
+                            //change marker position
+                            marker.setPosition(position);
+                            marker.showInfoWindow();
+
+                            animateCameraOnNewLatLng(position);
+                        }
+                    }
+
+                    private void animateCameraOnNewLatLng(LatLng latLng) {
+                        mMap.animateCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                        latLng,
+                                        LatLngUtils.CLOSE_ZOOM));
+
+                    }
+
+                });
+    }
+
 
 }
