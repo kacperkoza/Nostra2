@@ -6,12 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,12 +24,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import cosapp.com.nostra.CurrentLocation;
 import cosapp.com.nostra.DataManager;
+import cosapp.com.nostra.DistanceToPlace;
 import cosapp.com.nostra.LatLngUtils;
 import cosapp.com.nostra.Place.TicketMachine;
 import cosapp.com.nostra.R;
+import cosapp.com.nostra.TicketMachineAdapter;
 
 
 /**
@@ -37,9 +41,16 @@ import cosapp.com.nostra.R;
 public class TicketMachinesFragment extends android.support.v4.app.Fragment implements OnMapReadyCallback {
     private DataManager mDataManager;
     private GoogleMap mMap;
-    private ArrayList<TicketMachine> machines;
-    private ListView lv;
     private FloatingActionButton fab;
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private ArrayList<TicketMachine> machines;
+    private ArrayList<DistanceToPlace<TicketMachine>> distancesList;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,12 +63,19 @@ public class TicketMachinesFragment extends android.support.v4.app.Fragment impl
         mapFragment.getMapAsync(this);
 
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
-
-        lv = (ListView) view.findViewById(R.id.list);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.items_rv);
 
         mDataManager = new DataManager(getActivity());
         machines = mDataManager.getTicketMachines();
         mDataManager.close();
+
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(
+                getContext(),
+                DividerItemDecoration.VERTICAL
+        ));
 
         return view;
     }
@@ -88,11 +106,27 @@ public class TicketMachinesFragment extends android.support.v4.app.Fragment impl
 
         mMap.setInfoWindowAdapter(new TicketMachinesInfoWindow());
 
-        ArrayAdapter<String> names = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
-        names.add("scroll plx");
-        names.add("nehh");
-        names.add("lol");
-        lv.setAdapter(names);
+        calculateDistances();
+
+    }
+
+    private void calculateDistances() {
+        distancesList = new ArrayList<>(60);
+
+        for (int i = 0; i < machines.size(); i++) {
+            distancesList.add(new DistanceToPlace<>(machines.get(i), getContext()));
+        }
+
+        Collections.sort(distancesList);
+
+        mAdapter = new TicketMachineAdapter(distancesList, getContext()) {
+            @Override
+            public void onClickCallBack(LatLng coordinates) {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinates, LatLngUtils.CLOSE_ZOOM));
+            }
+        };
+        mRecyclerView.setAdapter(mAdapter);
+
     }
 
     private class TicketMachinesInfoWindow implements GoogleMap.InfoWindowAdapter {
@@ -102,7 +136,6 @@ public class TicketMachinesFragment extends android.support.v4.app.Fragment impl
 
             TextView title = (TextView) view.findViewById(R.id.place_textView);
             title.setText(marker.getTitle());
-            title.setTextColor(Color.BLACK);
 
             TextView description = (TextView) view.findViewById(R.id.description_textView);
             description.setText(marker.getSnippet());

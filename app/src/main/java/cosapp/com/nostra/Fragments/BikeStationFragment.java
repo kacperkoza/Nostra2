@@ -1,6 +1,7 @@
 package cosapp.com.nostra.Fragments;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -8,10 +9,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -19,6 +21,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -29,7 +32,6 @@ import cosapp.com.nostra.CurrentLocation;
 import cosapp.com.nostra.DataManager;
 import cosapp.com.nostra.DistanceToPlace;
 import cosapp.com.nostra.LatLngUtils;
-import cosapp.com.nostra.OnClickCallBack;
 import cosapp.com.nostra.Place.BikeStation;
 import cosapp.com.nostra.R;
 import cosapp.com.nostra.Utils;
@@ -41,8 +43,7 @@ import cosapp.com.nostra.XMLParser;
  */
 
 public class BikeStationFragment extends android.support.v4.app.Fragment
-        implements OnMapReadyCallback,
-        OnClickCallBack{
+        implements OnMapReadyCallback {
     private GoogleMap mMap;
     private FloatingActionButton fab;
     private DataManager mDataManager;
@@ -93,6 +94,8 @@ public class BikeStationFragment extends android.support.v4.app.Fragment
 
         fab.setOnClickListener(new CurrentLocation(getContext(), mMap));
 
+        mMap.setInfoWindowAdapter(new BikeInfoWindow());
+
         if (Utils.isNetworkAvailable(getContext())) {
             XMLParser xmlParser = new XMLParser(Websites.BIKE_STATIONS);
 
@@ -118,7 +121,10 @@ public class BikeStationFragment extends android.support.v4.app.Fragment
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngUtils.POZNAN, LatLngUtils.NORMAL_ZOOM));
         for (BikeStation bs : list) {
-            mMap.addMarker(new MarkerOptions().position(bs.getCoordinates()).title(bs.getPlaceName()));
+            mMap.addMarker(new MarkerOptions()
+                    .position(bs.getCoordinates())
+                    .title(bs.getPlaceName())
+                    .snippet(String.valueOf(bs.getFreeBikes())));
         }
 
 
@@ -133,13 +139,13 @@ public class BikeStationFragment extends android.support.v4.app.Fragment
 
         Collections.sort(distancesList);
 
-        BikesAdapter adapter = new BikesAdapter(distancesList, getContext()) {
+        mAdapter = new BikesAdapter(distancesList, getContext()) {
             @Override
             public void onClickCallBack(LatLng coordinates) {
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinates, LatLngUtils.CLOSE_ZOOM));
             }
         };
-        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setAdapter(mAdapter);
 
     }
 
@@ -160,9 +166,35 @@ public class BikeStationFragment extends android.support.v4.app.Fragment
         }
     }
 
-    @Override
-    public void returnLatLtnFromListItem(LatLng latLng) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, LatLngUtils.CLOSE_ZOOM));
-        Log.d("TAG", "clicked on: " + latLng);
+    private class BikeInfoWindow implements GoogleMap.InfoWindowAdapter {
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            View view = getActivity().getLayoutInflater().inflate(R.layout.bike_info_window, null);
+
+            TextView placeName = (TextView) view.findViewById(R.id.place_textView);
+            placeName.setText(marker.getTitle());
+
+
+            ImageView bikeIcon = (ImageView) view.findViewById(R.id.bike_imageView);
+            TextView numberOfBikes = (TextView) view.findViewById(R.id.bikes_numbers_textView);
+
+            if (marker.getSnippet() == null) {
+                numberOfBikes.setVisibility(View.GONE);
+                bikeIcon.setVisibility(View.GONE);
+            } else if (marker.getSnippet().equals("0")){
+                numberOfBikes.setTextColor(Color.RED);
+            } else {
+                numberOfBikes.setTextColor(Color.GREEN);
+            }
+            numberOfBikes.setText(" " + marker.getSnippet());
+
+            return view;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            return null;
+        }
     }
 }
