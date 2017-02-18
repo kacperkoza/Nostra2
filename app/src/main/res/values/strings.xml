@@ -54,5 +54,11 @@
     <string name="access_to_the_internet">Dostęp do internetu podczas pierwszego uruchomienia
     jest obowiązkowy.</string>
     <string name="no_access_last_udpate">Brak dostępu do internetu. Wyświetlone dane pochodzą z: </string>
+    <string name="official_site">Oficjalna strona:</string>
+    <string name="terms">Regulamin</string>
+    <string name="hotline">Telefon kontaktowy</string>
+    <string name="free_bikes">Wolne rowery:</string>
+    <string name="bikes_number">Numery rowerów:</string>
+    <string name="meter_unit">m</string>
 
 </resources>
