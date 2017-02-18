@@ -14,7 +14,8 @@
             android:id="@+id/place_textView"
             tools:text="nazwa przystanku"
             android:textStyle="normal|bold"
-            android:gravity="center_horizontal"/>
+            android:gravity="center_horizontal"
+            android:textColor="@color/colorPrimaryDark"/>
 
         <TextView
             android:text="TextView"
@@ -23,7 +24,8 @@
             android:id="@+id/description_textView"
             tools:text="Krótki opis"
             android:gravity="center"
-            android:maxWidth="275dp"/>
+            android:maxWidth="275dp"
+            android:textColor="#000000"/>
 
         <ImageView
             android:layout_width="match_parent"
