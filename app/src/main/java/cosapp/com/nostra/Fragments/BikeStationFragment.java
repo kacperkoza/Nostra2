@@ -5,25 +5,31 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
-import cosapp.com.nostra.CityBikesProvider;
+import cosapp.com.nostra.BikesAdapter;
 import cosapp.com.nostra.CurrentLocation;
 import cosapp.com.nostra.DataManager;
+import cosapp.com.nostra.DistanceToPlace;
 import cosapp.com.nostra.LatLngUtils;
+import cosapp.com.nostra.OnClickCallBack;
 import cosapp.com.nostra.Place.BikeStation;
 import cosapp.com.nostra.R;
 import cosapp.com.nostra.Utils;
@@ -34,11 +40,20 @@ import cosapp.com.nostra.XMLParser;
  * Created by kkoza on 02.02.2017.
  */
 
-public class BikeStationFragment extends android.support.v4.app.Fragment implements OnMapReadyCallback {
+public class BikeStationFragment extends android.support.v4.app.Fragment
+        implements OnMapReadyCallback,
+        OnClickCallBack{
     private GoogleMap mMap;
     private FloatingActionButton fab;
-    private ListView lv;
     private DataManager mDataManager;
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private ArrayList<BikeStation> list;
+    private ArrayList<DistanceToPlace<BikeStation>> distancesList;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,9 +64,20 @@ public class BikeStationFragment extends android.support.v4.app.Fragment impleme
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        lv = (ListView) view.findViewById(R.id.list);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.items_rv);
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
         mDataManager = new DataManager(getContext());
+
+
+
+
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(
+                getContext(),
+                DividerItemDecoration.VERTICAL
+        ));
 
         return view;
     }
@@ -67,12 +93,8 @@ public class BikeStationFragment extends android.support.v4.app.Fragment impleme
 
         fab.setOnClickListener(new CurrentLocation(getContext(), mMap));
 
-        ArrayList<BikeStation> list;
-
         if (Utils.isNetworkAvailable(getContext())) {
             XMLParser xmlParser = new XMLParser(Websites.BIKE_STATIONS);
-
-            CityBikesProvider cityBikesProvider = xmlParser.readInformationBikesProvider();
 
             list = xmlParser.parseNextBike();
 
@@ -80,6 +102,8 @@ public class BikeStationFragment extends android.support.v4.app.Fragment impleme
 
             String lastUpdateTime = xmlParser.readUpdateTime();
             updateLastUpdateTimeInSharedPreferences(lastUpdateTime);
+
+            calculateDistances();
 
             Utils.makeToast(getActivity().getApplicationContext(), lastUpdateTime, Toast.LENGTH_LONG);
         } else {
@@ -90,18 +114,32 @@ public class BikeStationFragment extends android.support.v4.app.Fragment impleme
             list = mDataManager.getBikeStations();
         }
 
+
+
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngUtils.POZNAN, LatLngUtils.NORMAL_ZOOM));
         for (BikeStation bs : list) {
             mMap.addMarker(new MarkerOptions().position(bs.getCoordinates()).title(bs.getPlaceName()));
         }
 
-        ArrayAdapter<String> names = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
-        names.add("lol");
-        names.add("lol");
-        names.add("lol");
-        lv.setAdapter(names);
 
+    }
 
+    private void calculateDistances() {
+        distancesList = new ArrayList<>(60);
+
+        for (int i = 0; i < list.size(); i++) {
+            distancesList.add(new DistanceToPlace<>(list.get(i), getContext()));
+        }
+
+        Collections.sort(distancesList);
+
+        BikesAdapter adapter = new BikesAdapter(distancesList, getContext()) {
+            @Override
+            public void onClickCallBack(LatLng coordinates) {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinates, LatLngUtils.CLOSE_ZOOM));
+            }
+        };
+        mRecyclerView.setAdapter(adapter);
 
     }
 
@@ -120,5 +158,11 @@ public class BikeStationFragment extends android.support.v4.app.Fragment impleme
         for (BikeStation bs : list) {
             mDataManager.updateBikeStation(bs);
         }
+    }
+
+    @Override
+    public void returnLatLtnFromListItem(LatLng latLng) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, LatLngUtils.CLOSE_ZOOM));
+        Log.d("TAG", "clicked on: " + latLng);
     }
 }
