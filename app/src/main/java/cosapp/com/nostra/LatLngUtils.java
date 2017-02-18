@@ -1,6 +1,7 @@
 package cosapp.com.nostra;
 
 import android.location.Location;
+import android.location.LocationManager;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -18,5 +19,13 @@ public final class LatLngUtils {
 
     public static LatLng locationToLatLng(Location location) {
         return new LatLng(location.getLatitude(), location.getLongitude());
+    }
+
+    public static Location LatLngToLocation(LatLng latLng) {
+        Location location = new Location(LocationManager.GPS_PROVIDER);
+        location.setLongitude(latLng.longitude);
+        location.setLatitude(latLng.latitude);
+
+        return location;
     }
 }
