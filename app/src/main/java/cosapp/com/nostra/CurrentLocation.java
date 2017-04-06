@@ -2,6 +2,7 @@ package cosapp.com.nostra;
 
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -47,12 +48,15 @@ public class CurrentLocation implements View.OnClickListener {
                     @Override
                     public void onLocationUpdated(Location location) {
                         LatLng position = LatLngUtils.locationToLatLng(location);
+                        Log.d("TAG", position.toString());
 
                         if (marker == null) {
+                            Log.d("tag", "if");
                             marker = mMap.addMarker(new MarkerOptions()
                                     .title(mContext.getResources().getString(R.string.your_position))
                                     .position(position));
                         } else {
+                            Log.d("tag", "else");
                             marker.setPosition(position);
                         }
                         marker.showInfoWindow();

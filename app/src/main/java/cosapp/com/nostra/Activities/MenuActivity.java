@@ -30,7 +30,6 @@ import cosapp.com.nostra.XMLParser;
 public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawer;
-    private Toolbar toolbar;
     private NavigationView nvDrawer;
     private MenuItem lastSelectedMenuItem;
     private Class fragmentClass;
@@ -76,12 +75,8 @@ public class MenuActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             mDrawer.openDrawer(GravityCompat.START);
             return true;
@@ -93,34 +88,13 @@ public class MenuActivity extends AppCompatActivity
                 CityBikesProvider cityBikesProvider = xmlParser.readInformationBikesProvider();
                 buildInfoDialog(cityBikesProvider);
             }
-
-
-
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        /*if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }*/
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -129,18 +103,15 @@ public class MenuActivity extends AppCompatActivity
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
-
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         selectDrawerItem(menuItem);
                         return true;
                     }
                 });
-
     }
 
     public void selectDrawerItem(final MenuItem menuItem) {
-        // Create a new fragment and specify the fragment to show based on nav item clicked
         fragment = null;
 
         switch (menuItem.getItemId()) {
@@ -168,7 +139,6 @@ public class MenuActivity extends AppCompatActivity
                 fragmentClass = TicketMachinesFragment.class;
                 break;
         }
-        // Close the navigation drawer
         mDrawer.closeDrawers();
 
         mDrawer.setDrawerListener(new DrawerLayout.DrawerListener() {
@@ -180,22 +150,15 @@ public class MenuActivity extends AppCompatActivity
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-                //ItemFragment itemFragment = new ItemFragment();
-
-                // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.mapContent, fragment).commit();
-                //fragmentManager.beginTransaction().replace(R.id.listContent, itemFragment).commit();
 
-                // Highlight the selected item has been done by NavigationView
                 if (lastSelectedMenuItem != null) {
                     lastSelectedMenuItem.setChecked(false);
                 }
                 menuItem.setChecked(true);
                 lastSelectedMenuItem = menuItem;
 
-                // Set action bar title
                 setTitle(menuItem.getTitle());
 
             }
@@ -211,7 +174,6 @@ public class MenuActivity extends AppCompatActivity
 
     private void buildInfoDialog(final CityBikesProvider cityBikesProvider) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
         CharSequence[] items = {
                 getResources().getString(R.string.official_site),
                 getResources().getString(R.string.terms),
@@ -227,7 +189,6 @@ public class MenuActivity extends AppCompatActivity
                     public void onClick(DialogInterface dialogInterface, int which) {
                         if (which == 0) {
                             intent = new Intent(Intent.ACTION_VIEW, Uri.parse(cityBikesProvider.getWebsite()));
-                            Log.d("0", "here");
                         } else if (which == 1) {
                             intent = new Intent(Intent.ACTION_VIEW, Uri.parse(cityBikesProvider.getTerms()));
                         } else if (which == 2) {

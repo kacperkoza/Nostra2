@@ -6,18 +6,9 @@ package cosapp.com.nostra.Place;
 
 import com.google.android.gms.maps.model.LatLng;
 
-/**
- * Class which hold an information about parking machines: coords, zone and street.
- */
 public class ParkingMachine extends Place {
     private String zone;
     private String street;
-
-    public ParkingMachine() {
-        super(null, "");
-        zone = "0";
-        street = "";
-    }
 
     public ParkingMachine(LatLng coordinates, String placeName, String zone, String street) {
         super(coordinates, placeName);

@@ -6,10 +6,6 @@ package cosapp.com.nostra.Place;
 
 import com.google.android.gms.maps.model.LatLng;
 
-/**
- * <p>Class that holds information about Ticket machines: coords, place name, description of place,
- * availbility of payment by credit card.</p>
- */
 public class TicketMachine extends Place {
     private String description;
     private boolean paymentByCreditCardAvailable;

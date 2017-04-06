@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import cosapp.com.nostra.GoogleMaps.GoogleMapsDistance;
 import cosapp.com.nostra.OpeningHoursReader;
 import cosapp.com.nostra.Place.ParkingMachine;
 import cosapp.com.nostra.Place.TicketMachine;
@@ -32,21 +31,6 @@ import cosapp.com.nostra.Place.TicketPoint;
  */
 
 public class JSONParser {
-
-    /**
-     * Parser for JSON text which contains information about:
-     * <ul>
-     * <li>xy coords,</li>
-     * <li>place name</li>
-     * <li>place description</li>
-     * <li>availbility of payment by credit cards</li>
-     * </ul>
-     *
-     * @param input Text with JSON
-     * @return ArrayList of the Ticket machines
-     * @throws JSONException
-     * @see TicketMachine
-     */
     public static ArrayList<TicketMachine> parseTicketMachines(String input) throws JSONException {
         ArrayList<TicketMachine> list = new ArrayList<>(70);
 
@@ -79,37 +63,6 @@ public class JSONParser {
         description = description.substring(0, 1).toUpperCase() + description.substring(1, description.length());
         description = description.replace("...", ".");
         return description;
-    }
-
-    /**
-     * <p>Parser for response from Google Maps API.</p>
-     * <p>Prepared for getting an information about address, walking time and distance between
-     * single origin and list of destinations</p>
-     *
-     * @param response <code>String</code> with response from Google Maps API.
-     * @return <code>ArrayList</code> with <code>GoogleMapsDistance</code> objects which address,
-     * walking time and distance between origin and destination.
-     * @throws JSONException
-     */
-    public static ArrayList<GoogleMapsDistance> parseGoogleMapsResponse(String response) throws JSONException {
-        ArrayList<GoogleMapsDistance> list = new ArrayList<>(100);
-
-        JSONObject jsonObject = new JSONObject(response);
-        JSONArray destinationAddresses = jsonObject.getJSONArray("destination_addresses");
-        JSONArray rows = jsonObject.getJSONArray("rows");
-        JSONObject object = rows.getJSONObject(0);
-        JSONArray elements = object.getJSONArray("elements");
-
-        for (int i = 0; i < elements.length(); i++) {
-            JSONObject obj = elements.getJSONObject(i);
-            JSONObject distance = obj.getJSONObject("distance");
-            JSONObject duration = obj.getJSONObject("duration");
-            int distanceInMeters = distance.getInt("value");
-            int durationInSeconds = duration.getInt("value");
-            String address = destinationAddresses.getString(i);
-            list.add(new GoogleMapsDistance(address, distanceInMeters, durationInSeconds));
-        }
-        return list;
     }
 
     public static ArrayList<ParkingMachine> parseParkingMachines(String input) throws JSONException {

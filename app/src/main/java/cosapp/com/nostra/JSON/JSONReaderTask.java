@@ -12,16 +12,9 @@ import java.net.URLConnection;
  *  Created by kkoza on 12.11.2016.
  */
 
-/**
- * <p>This class allows you to download JSON code from the https website.</p> *
- */
-
 public class JSONReaderTask extends AsyncTask<Void, Void, String> {
     private String websiteURL;
 
-    /**
-     * @param websiteURL URL of website with JSON code
-     */
     public JSONReaderTask(String websiteURL) {
         this.websiteURL = websiteURL;
     }

@@ -56,11 +56,7 @@ public class SplashScreen extends AppCompatActivity {
         super.onResume();
 
         if (isFirstRun() && !Utils.isNetworkAvailable(this)) {
-//            Utils.makeAlertWindow(getApplicationContext(),
-//                    getResources().getString(R.string.error),
-//                    getResources().getString(R.string.access_to_the_internet));
-      //TODO IMPLEMENT DIALOG WINDOW
-            System.exit(0);
+             //TODO IMPLEMENT DIALOG WINDOW
         }
 
         if (isFirstRun()) {

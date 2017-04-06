@@ -80,11 +80,6 @@ public class XMLParser {
         return null;
     }
 
-    /**
-     *  <p>Reads the time of last update of NextBike XML file.</p>
-     *
-     * @return the time of last update, e.g. 02.02.2017 16:35
-     */
     public String readUpdateTime() {
         getDocument();
 

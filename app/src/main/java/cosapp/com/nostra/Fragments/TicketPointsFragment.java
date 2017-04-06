@@ -59,7 +59,9 @@ public class TicketPointsFragment extends Fragment implements OnMapReadyCallback
 
         for (int i = 0 ; i < list.size(); i++) {
             LatLng coords = list.get(i).getCoordinates();
-            mMap.addMarker(getMarkerWithProperColor(list.get(i)).position(coords).title(list.get(i).getPlaceName()));
+            mMap.addMarker(getMarkerWithProperColor(list.get(i))
+                    .position(coords)
+                    .title(list.get(i).getPlaceName()));
         }
 
         mMap.moveCamera(newLatLngZoom(new LatLng(52.405794, 16.930569), 12.0f));

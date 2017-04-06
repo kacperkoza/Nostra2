@@ -5,10 +5,6 @@ import java.util.HashMap;
 
 import cosapp.com.nostra.OpeningHours;
 
-/**
- * Created by kkoza on 24.11.2016.
- */
-
 public class TicketPoint extends Place {
     /**
      * How to use key:

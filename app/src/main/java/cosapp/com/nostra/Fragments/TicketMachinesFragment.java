@@ -2,6 +2,7 @@ package cosapp.com.nostra.Fragments;
 
 
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +35,8 @@ import cosapp.com.nostra.LatLngUtils;
 import cosapp.com.nostra.Place.TicketMachine;
 import cosapp.com.nostra.R;
 import cosapp.com.nostra.TicketMachineAdapter;
+import io.nlopez.smartlocation.OnLocationUpdatedListener;
+import io.nlopez.smartlocation.SmartLocation;
 
 
 /**
@@ -77,9 +81,16 @@ public class TicketMachinesFragment extends android.support.v4.app.Fragment impl
                 DividerItemDecoration.VERTICAL
         ));
 
+        Log.d("tag", SmartLocation.with(getContext()).location().state().isAnyProviderAvailable() ? "true" : "false");
+        SmartLocation.with(getContext()).location().start(new OnLocationUpdatedListener() {
+            @Override
+            public void onLocationUpdated(Location location) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(LatLngUtils.locationToLatLng(location)));
+            }
+        });
+
         return view;
     }
-
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -92,7 +103,7 @@ public class TicketMachinesFragment extends android.support.v4.app.Fragment impl
 
         mMap = googleMap;
 
-        fab.setOnClickListener(new CurrentLocation(getContext(), mMap));
+        fab.setOnClickListener(new CurrentLocation(getActivity().getApplicationContext(), mMap));
 
         for (TicketMachine tm : machines) {
             LatLng latLng = tm.getCoordinates();
@@ -154,9 +165,6 @@ public class TicketMachinesFragment extends android.support.v4.app.Fragment impl
 
             if (marker.getTag() == null || creditCardNotAccepted) {
                 creditCards.setVisibility(View.GONE);
-            } else {
-
-
             }
             return view;
         }

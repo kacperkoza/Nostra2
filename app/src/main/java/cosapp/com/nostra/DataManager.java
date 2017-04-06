@@ -25,11 +25,6 @@ import cosapp.com.nostra.Place.TicketPoint;
  * Created by kkoza on 12.11.2016.
  */
 
-/**
- * <p>SQLite database for writing and reading data.</p>
- * <p>Saving and getting information about Ticket machines and parking machines.</p>
- * <p>Tables: parkingMachines and ticketMachines.</p>
- */
 public class DataManager extends SQLiteOpenHelper {
 
     public DataManager(Context context) {
@@ -128,10 +123,6 @@ public class DataManager extends SQLiteOpenHelper {
         db.close();
     }
 
-    /**
-     * Adds <code>TicketMachine</code> object to the table parkingMachines.
-     * @param ticketMachine to add
-     */
     public void addTicketMachineToDatabase(TicketMachine ticketMachine) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("creditCard", (ticketMachine.isPaymentByCreditCardAvailable() ? 1 : 0));
@@ -144,11 +135,6 @@ public class DataManager extends SQLiteOpenHelper {
         db.insertOrThrow("ticketMachines", null, contentValues);
         db.close();
     }
-
-    /**
-     * Adds Ticket Point object to the table ticketPoints
-     * @param ticketPoint to add.
-     */
 
     public void addTicketPointToDatabase(TicketPoint ticketPoint) {
         ContentValues contentValues = new ContentValues();
@@ -209,11 +195,6 @@ public class DataManager extends SQLiteOpenHelper {
         return localTime.getHourOfDay() + ":" + localTime.getMinuteOfHour();
     }
 
-    /**
-     * <p>Getting <code>ArrayList</code> which containt all <code>TicketPoint</code> objects</p>
-     *
-     * @return <code>ArrayListe</code> with Ticket Points
-     */
     public ArrayList<TicketPoint> getTicketPoints() {
         ArrayList<TicketPoint> list = new ArrayList<>(320);
 
@@ -292,11 +273,6 @@ public class DataManager extends SQLiteOpenHelper {
         return new OpeningHours(LocalTime.fromDateFields(open), LocalTime.fromDateFields(close));
     }
 
-    /**
-     * Adds <code>Parking Machine</code> object to the database.
-     * @param parkingMachine to add.
-     */
-
     public void addParkingMachineToTheDatabase(ParkingMachine parkingMachine) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("x", parkingMachine.getCoordinates().longitude);
@@ -308,11 +284,6 @@ public class DataManager extends SQLiteOpenHelper {
         db.insertOrThrow("parkingMachines", null, contentValues);
         db.close();
     }
-
-    /**
-     * Reads all <code>ParkingMachine</code> objects from database.
-     * @return <code>ArrayList</code> with all objects.
-     */
 
     public ArrayList<ParkingMachine> getParkingMachines() {
         ArrayList<ParkingMachine> list = new ArrayList<>(60);
@@ -349,37 +320,6 @@ public class DataManager extends SQLiteOpenHelper {
         return list;
     }
 
-
-    /**
-     * Fucntion for getting coords of all ticket machines for Google Maps API request.
-     * @return <code>ArrayList</code> of all ticket machines coords.
-     */
-    @Deprecated
-    public ArrayList<LatLng> getCoords(){
-        ArrayList<LatLng> list = new ArrayList<>(60);
-        Cursor cursor = makeQuery("parkingMachines", "x", "y");
-
-        while (cursor.moveToNext()) {
-            LatLng latLng = new LatLng(cursor.getDouble(0), cursor.getDouble(1));
-            list.add(latLng);
-        }
-        return list;
-
-    }
-
-    /**
-     * Making query to the proper table.
-     * Available tables:
-     * <ul>
-     * <li>parkingMachines</li>
-     * <li>ticketMachines</li>
-     * <li>ticketPoints</li>
-     * <li>ticketPointsHours</li>
-     * </ul>
-     *
-     * @param tableName one of the above table's name
-     * @param columns desired columns
-     */
     private Cursor makeQuery(String tableName, String... columns) {
         SQLiteDatabase db = getReadableDatabase();
         return db.query(tableName, columns, null, null, null, null, null);

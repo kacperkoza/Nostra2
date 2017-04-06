@@ -6,8 +6,6 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import io.nlopez.smartlocation.SmartLocation;
-
 /**
  * Created by kkoza on 18.02.2017.
  */
@@ -25,11 +23,16 @@ public class DistanceToPlace<T extends cosapp.com.nostra.Place.Place> implements
 
     private float distanceFromCurrentPositionTo(LatLng latLng) {
         Location destination = LatLngUtils.LatLngToLocation(latLng);
-        Location actual = SmartLocation.with(mContext)
-                .location()
-                .oneFix()
-                .getLastLocation();
-
+        Location actual = LatLngUtils.LatLngToLocation(LatLngUtils.POZNAN);
+//                SmartLocation.with(mContext)
+//                .location()
+//                .oneFix()
+//                .getLastLocation();
+//        Log.d("tag", SmartLocation.with(mContext)
+//                .location()
+//                .state()
+//                .isAnyProviderAvailable() ? "true" : "false");
+//        Log.d("TAG", actual.toString());
         return actual.distanceTo(destination);
     }
 
